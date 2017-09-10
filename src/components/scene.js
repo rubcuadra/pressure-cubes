@@ -33,13 +33,17 @@ class Scene extends Component {
     this.cameraQuaternion = new THREE.Quaternion()
       .setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI / 2);
     
-    //Configurar estado, onAnimate es el encargo de invocar el render
-    this._onAnimate = this._onAnimate.bind(this);
+    
 
     const character = this.resetCharacter();
-    this.state = {character};
-
-
+    const objD = {
+      geoId:"objGeo",
+      materialId:"matGeo",
+      width: character.dimensions.width/2,
+      height: character.dimensions.height/2,
+      depth: character.dimensions.depth/2,
+    }; //Objects Dimensions
+    
     //INIT CANNON
     const world = new CANNON.World();
     world.quatNormalizeSkip = 0;
@@ -47,17 +51,16 @@ class Scene extends Component {
     world.gravity.set(0, 0, 6); //El cubo caera lateralmente <-
     world.broadphase = new CANNON.NaiveBroadphase();
     const mass = 5;
-
+    
     //ADD 1 BOX TO THE WORLD
-    const boxShape = new CANNON.Box(new CANNON.Vec3(0.25, 0.25, 0.25));
+    const boxShape = new CANNON.Box(new CANNON.Vec3(objD.width,objD.height,objD.depth));
     const boxBody = new CANNON.Body({mass});
     boxBody.addShape(boxShape);
     boxBody.position.set( 3, //ESTE y Z DEBERIA IR CAMBIANDO
                           character.position.y,
                           character.position.z - 3 ); //Donde empiezan a salir
     world.addBody(boxBody);
-
-
+    
     //ADD Vertical PLANE to the WORLD
     const groundShape = new CANNON.Plane();
     const groundBody = new CANNON.Body({ mass: 0 });
@@ -67,8 +70,23 @@ class Scene extends Component {
     world.addBody(groundBody);
     // boxBody.collisionFilterGroup = 0;
     // boxBody.collisionFilterMask = 0;
+    
+    //Add Character to World
+    // const boxShape = new CANNON.Box(new CANNON.Vec3(0.25, 0.25, 0.25));
+    // const boxBody = new CANNON.Body({mass});
+    // boxBody.addShape(boxShape);
+    // boxBody.position.set( 3, //ESTE y Z DEBERIA IR CAMBIANDO
+    //                       character.position.y,
+    //                       character.position.z - 3 ); //Donde empiezan a salir
+    // world.addBody(boxBody);
+
+    //Agregar como objetos de la clase
+    this.objectsDim = objD;
+    this._onAnimate = this._onAnimate.bind(this);
     this.timeStep = 1 / 60; //Evaluate gravity per second
     this.world = world;
+    //Poner el estado
+    this.state = {character};
   }
 
   resetCharacter(){
@@ -79,13 +97,17 @@ class Scene extends Component {
       startPosition: position.clone(),
       quaternion: new THREE.Quaternion(),
       geoId:"charGeo",
-      materialId:"charMat"
+      materialId:"charMat",
+      dimensions:{
+        width:0.5,
+        height:0.5,
+        depth:0.5
+      }
     };
   }
 
   _updateWorld(){
     this.world.step(this.timeStep);
-    
   }
 
   _onAnimate() {
@@ -137,26 +159,38 @@ class Scene extends Component {
       <resources>
         <boxGeometry
           resourceId={this.state.character.geoId}
-          width={0.5}
-          height={0.5}
-          depth={0.5}
+          width={this.state.character.dimensions.width}
+          height={this.state.character.dimensions.height}
+          depth={this.state.character.dimensions.depth}
           widthSegments={10}
           heightSegments={10}/>
         <meshPhongMaterial
           resourceId={this.state.character.materialId}
           color={0x888888}/>
+
+        <boxGeometry
+          resourceId={this.objectsDim.geoId}
+          width={this.objectsDim.width}
+          height={this.objectsDim.height}
+          depth={this.objectsDim.depth}
+          widthSegments={10}
+          heightSegments={10}/>
+
+        <meshPhongMaterial
+          resourceId={this.objectsDim.materialId}
+          color={0x88FF88}/>
       </resources>
     );
   }
 
   renderObjects(){
     const {bodies} = this.world;
-    const {position,quaternion} = bodies[0]
-    
+    const {position,quaternion} = bodies[0];
+    const {geoId,materialId} = this.objectsDim;
     return (
       <Cube
-        geometryId="charGeo"
-        materialId="charMat"
+        geometryId={geoId}
+        materialId={materialId}
         position={new THREE.Vector3().copy(position)}
         quaternion={new THREE.Quaternion().copy(quaternion)}>
       </Cube>
