@@ -45,23 +45,6 @@ class Scene extends Component {
     world.broadphase = new CANNON.NaiveBroadphase();
     const mass = 5;
 
-    //ADD 1 BOX TO THE WORLD
-    const boxShape = new CANNON.Box(new CANNON.Vec3(objD.width,objD.height,objD.depth));
-    const boxBody = new CANNON.Body({mass});
-    boxBody.addShape(boxShape);
-    boxBody.position.set( 3, //ESTE y Z DEBERIA IR CAMBIANDO
-                          character.position.y,
-                          character.position.z - 3 ); //Donde empiezan a salir
-    world.addBody(boxBody);
-    
-    //ADD Vertical PLANE to the WORLD
-    const groundShape = new CANNON.Plane();
-    const groundBody = new CANNON.Body({ mass: 0 });
-    groundBody.addShape(groundShape);
-    groundBody.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), -Math.PI);
-    groundBody.position.set(0,0,3.5); //Pared Vertical, nos sirve para saber cuales ya se fueron
-    world.addBody(groundBody);
-
     //Add Character to World
     const charShape = new CANNON.Box(new CANNON.Vec3(character.dimensions.width,
                                                      character.dimensions.height,
@@ -73,6 +56,23 @@ class Scene extends Component {
                            character.position.y,
                            character.position.z);
     world.addBody(charBody);
+
+    //ADD Vertical PLANE to the WORLD
+    const groundShape = new CANNON.Plane();
+    const groundBody = new CANNON.Body({ mass: 0 });
+    groundBody.addShape(groundShape);
+    groundBody.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), -Math.PI);
+    groundBody.position.set(0,0,3.5); //Pared Vertical, nos sirve para saber cuales ya se fueron
+    world.addBody(groundBody);
+
+    //ADD 1 BOX TO THE WORLD
+    const boxShape = new CANNON.Box(new CANNON.Vec3(objD.width,objD.height,objD.depth));
+    const boxBody = new CANNON.Body({mass});
+    boxBody.addShape(boxShape);
+    boxBody.position.set( 3, //ESTE y Z DEBERIA IR CAMBIANDO
+                          character.position.y,
+                          character.position.z - 3 ); //Donde empiezan a salir
+    world.addBody(boxBody);
 
     //Agregar como objetos de la clase
     this.objectsDim = objD;
@@ -132,16 +132,19 @@ class Scene extends Component {
 
   renderObjects(){
     const {bodies} = this.world;
-    const {position,quaternion} = bodies[0];
-    const {geoId,materialId} = this.objectsDim;
-    return (
-      <Cube
-        geometryId={geoId}
-        materialId={materialId}
-        position={new THREE.Vector3().copy(position)}
-        quaternion={new THREE.Quaternion().copy(quaternion)}>
-      </Cube>
-    );
+    const {geoId,materialId} = this.objectsDim; //Dimensiones para todos, tal vez diferentes?
+    const c = Array( bodies.length-2 );
+    for (var i = 2; i < bodies.length; i++) 
+    {
+      const { position, quaternion } = bodies[i];
+      c.push(<Cube
+                key={i}
+                geometryId={geoId}
+                materialId={materialId}
+                position={new THREE.Vector3().copy(position)}
+                quaternion={new THREE.Quaternion().copy(quaternion)}/>);
+    }
+    return c;   
   }
 
   renderCharacter(){
