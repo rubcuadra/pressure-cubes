@@ -44,19 +44,29 @@ class Scene extends Component {
     const world = new CANNON.World();
     world.quatNormalizeSkip = 0;
     world.quatNormalizeFast = false;
-    world.gravity.set(0, 0, 0.25); //El cubo caera lateralmente <-
+    world.gravity.set(0, 0, 6); //El cubo caera lateralmente <-
     world.broadphase = new CANNON.NaiveBroadphase();
     const mass = 5;
 
+    //ADD 1 BOX TO THE WORLD
     const boxShape = new CANNON.Box(new CANNON.Vec3(0.25, 0.25, 0.25));
     const boxBody = new CANNON.Body({mass});
     boxBody.addShape(boxShape);
-    boxBody.position.set( -2.5 + Math.random() * 5,
+    boxBody.position.set( 3, //ESTE y Z DEBERIA IR CAMBIANDO
                           character.position.y,
-                          character.position.z - 3 );
+                          character.position.z - 3 ); //Donde empiezan a salir
+    world.addBody(boxBody);
+
+
+    //ADD Vertical PLANE to the WORLD
+    const groundShape = new CANNON.Plane();
+    const groundBody = new CANNON.Body({ mass: 0 });
+    groundBody.addShape(groundShape);
+    groundBody.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), -Math.PI);
+    groundBody.position.set(0,0,5); //Pared Vertical, nos sirve para saber cuales ya se fueron
+    world.addBody(groundBody);
     // boxBody.collisionFilterGroup = 0;
     // boxBody.collisionFilterMask = 0;
-    world.addBody(boxBody);
     this.timeStep = 1 / 60; //Evaluate gravity per second
     this.world = world;
   }
