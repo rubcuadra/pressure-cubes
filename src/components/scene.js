@@ -131,20 +131,19 @@ class Scene extends Component {
   }
 
   renderObjects(){
-    const {bodies} = this.world;
     const {geoId,materialId} = this.objectsDim; //Dimensiones para todos, tal vez diferentes?
-    const c = Array( bodies.length-2 );
-    for (var i = 2; i < bodies.length; i++) 
-    {
-      const { position, quaternion } = bodies[i];
-      c.push(<Cube
-                key={i}
-                geometryId={geoId}
-                materialId={materialId}
-                position={new THREE.Vector3().copy(position)}
-                quaternion={new THREE.Quaternion().copy(quaternion)}/>);
-    }
-    return c;   
+    return this.world.bodies.map( ({position,quaternion},i)=>{
+        if (i>1) 
+        {
+          return (
+            <Cube
+              key={i}
+              geometryId={geoId}
+              materialId={materialId}
+              position={new THREE.Vector3().copy(position)}
+              quaternion={new THREE.Quaternion().copy(quaternion)}/>);
+        }
+    });   
   }
 
   renderCharacter(){
