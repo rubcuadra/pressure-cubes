@@ -38,6 +38,13 @@ class Scene extends Component {
     //Configurar estado, onAnimate es el encargo de invocar el render
     this._onAnimate = this._onAnimate.bind(this);
     this.state = {character:this.resetCharacter()};
+
+    // var map = new THREE.TextureLoader().load( 'textures/UV_Grid_Sm.jpg' );
+    // map.wrapS = map.wrapT = THREE.RepeatWrapping;
+    // map.anisotropy = 16;
+    // var material = new THREE.MeshLambertMaterial( { map: map, side: THREE.DoubleSide } );
+    // const object = new THREE.Mesh( new THREE.BoxGeometry( 100, 100, 100, 4, 4, 4 ), material );
+    // console.log(object)
   }
 
   resetCharacter(){
@@ -158,7 +165,6 @@ class Scene extends Component {
             position={this.shadowDition}
             lookAt={this.lightTarget}
             castShadow/>
-
 
           {this.renderFloor()}
           {this.renderCharacter()}
