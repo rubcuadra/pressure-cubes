@@ -33,16 +33,9 @@ class Scene extends Component {
     this.cameraQuaternion = new THREE.Quaternion()
       .setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI / 2);
     
-    
-
+    //init Character and objectsDimensions
     const character = this.resetCharacter();
-    const objD = {
-      geoId:"objGeo",
-      materialId:"matGeo",
-      width: character.dimensions.width/2,
-      height: character.dimensions.height/2,
-      depth: character.dimensions.depth/2,
-    }; //Objects Dimensions
+    const objD = this.getObjectsConfig(character.dimensions);
     
     //INIT CANNON
     const world = new CANNON.World();
@@ -66,20 +59,20 @@ class Scene extends Component {
     const groundBody = new CANNON.Body({ mass: 0 });
     groundBody.addShape(groundShape);
     groundBody.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), -Math.PI);
-    groundBody.position.set(0,0,5); //Pared Vertical, nos sirve para saber cuales ya se fueron
+    groundBody.position.set(0,0,3.5); //Pared Vertical, nos sirve para saber cuales ya se fueron
     world.addBody(groundBody);
 
     //Add Character to World
-    // const charShape = new CANNON.Box(new CANNON.Vec3(character.dimensions.width,
-    //                                                  character.dimensions.height,
-    //                                                  character.dimensions.depth));
-    // const charBody = new CANNON.Body( {mass:0} );
+    const charShape = new CANNON.Box(new CANNON.Vec3(character.dimensions.width,
+                                                     character.dimensions.height,
+                                                     character.dimensions.depth));
+    const charBody = new CANNON.Body( {mass:0} );
     
-    // charBody.addShape(charShape);
-    // charBody.position.set( character.startPosition.x,
-    //                        character.position.y,
-    //                        character.position.z);
-    // world.addBody(charBody);
+    charBody.addShape(charShape);
+    charBody.position.set( character.startPosition.x,
+                           character.position.y,
+                           character.position.z);
+    world.addBody(charBody);
 
     //Agregar como objetos de la clase
     this.objectsDim = objD;
@@ -88,6 +81,17 @@ class Scene extends Component {
     this.world = world;
     //Poner el estado
     this.state = {character};
+  }
+
+  //Las dimensiones son en relacion al character
+  getObjectsConfig({width,height,depth}){
+    return {
+      geoId:"objGeo",
+      materialId:"matGeo",
+      width: width/2,
+      height: height/2,
+      depth: depth/2,
+    };
   }
 
   resetCharacter(){
@@ -177,8 +181,8 @@ class Scene extends Component {
           width={this.state.character.dimensions.width}
           height={this.state.character.dimensions.height}
           depth={this.state.character.dimensions.depth}
-          widthSegments={10}
-          heightSegments={10}/>
+          widthSegments={1}
+          heightSegments={1}/>
         <meshPhongMaterial
           resourceId={this.state.character.materialId}
           color={0x888888}/>
