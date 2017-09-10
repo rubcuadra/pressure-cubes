@@ -2,6 +2,7 @@ import React,{Component} from 'react';
 import Pressure from 'react-pressure';
 import React3 from 'react-three-renderer';
 import * as THREE from 'three';
+import CANNON from 'cannon/src/Cannon';
 import Cube from './cube';
 
 const pressureConfig = {
@@ -32,19 +33,32 @@ class Scene extends Component {
     this.cameraQuaternion = new THREE.Quaternion()
       .setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI / 2);
     
-    // object = new THREE.Mesh( new THREE.BoxGeometry( 100, 100, 100, 4, 4, 4 ), material );
-    // object.position.set( -200, 0, 0 );
-    // scene.add( object );
     //Configurar estado, onAnimate es el encargo de invocar el render
     this._onAnimate = this._onAnimate.bind(this);
-    this.state = {character:this.resetCharacter()};
 
-    // var map = new THREE.TextureLoader().load( 'textures/UV_Grid_Sm.jpg' );
-    // map.wrapS = map.wrapT = THREE.RepeatWrapping;
-    // map.anisotropy = 16;
-    // var material = new THREE.MeshLambertMaterial( { map: map, side: THREE.DoubleSide } );
-    // const object = new THREE.Mesh( new THREE.BoxGeometry( 100, 100, 100, 4, 4, 4 ), material );
-    // console.log(object)
+    const character = this.resetCharacter();
+    this.state = {character};
+
+
+    //INIT CANNON
+    const world = new CANNON.World();
+    world.quatNormalizeSkip = 0;
+    world.quatNormalizeFast = false;
+    world.gravity.set(0, 0, 0.25); //El cubo caera lateralmente <-
+    world.broadphase = new CANNON.NaiveBroadphase();
+    const mass = 5;
+
+    const boxShape = new CANNON.Box(new CANNON.Vec3(0.25, 0.25, 0.25));
+    const boxBody = new CANNON.Body({mass});
+    boxBody.addShape(boxShape);
+    boxBody.position.set( -2.5 + Math.random() * 5,
+                          character.position.y,
+                          character.position.z - 3 );
+    // boxBody.collisionFilterGroup = 0;
+    // boxBody.collisionFilterMask = 0;
+    world.addBody(boxBody);
+    this.timeStep = 1 / 60; //Evaluate gravity per second
+    this.world = world;
   }
 
   resetCharacter(){
@@ -59,8 +73,15 @@ class Scene extends Component {
     };
   }
 
+  _updateWorld(){
+    this.world.step(this.timeStep);
+    
+  }
+
   _onAnimate() {
     this._updateCharacterPosition();
+    this._updateWorld();
+
     this.forceUpdate();
   };
 
@@ -118,6 +139,20 @@ class Scene extends Component {
     );
   }
 
+  renderObjects(){
+    const {bodies} = this.world;
+    const {position,quaternion} = bodies[0]
+    
+    return (
+      <Cube
+        geometryId="charGeo"
+        materialId="charMat"
+        position={new THREE.Vector3().copy(position)}
+        quaternion={new THREE.Quaternion().copy(quaternion)}>
+      </Cube>
+    );
+  }
+
   render() {
     const [width, height] = [1500,800];
     return (
@@ -168,6 +203,7 @@ class Scene extends Component {
 
           {this.renderFloor()}
           {this.renderCharacter()}
+          {this.renderObjects()}
 
         </scene>
       </React3>
