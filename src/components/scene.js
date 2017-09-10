@@ -51,7 +51,7 @@ class Scene extends Component {
     world.gravity.set(0, 0, 6); //El cubo caera lateralmente <-
     world.broadphase = new CANNON.NaiveBroadphase();
     const mass = 5;
-    
+
     //ADD 1 BOX TO THE WORLD
     const boxShape = new CANNON.Box(new CANNON.Vec3(objD.width,objD.height,objD.depth));
     const boxBody = new CANNON.Body({mass});
@@ -68,17 +68,18 @@ class Scene extends Component {
     groundBody.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), -Math.PI);
     groundBody.position.set(0,0,5); //Pared Vertical, nos sirve para saber cuales ya se fueron
     world.addBody(groundBody);
-    // boxBody.collisionFilterGroup = 0;
-    // boxBody.collisionFilterMask = 0;
-    
+
     //Add Character to World
-    // const boxShape = new CANNON.Box(new CANNON.Vec3(0.25, 0.25, 0.25));
-    // const boxBody = new CANNON.Body({mass});
-    // boxBody.addShape(boxShape);
-    // boxBody.position.set( 3, //ESTE y Z DEBERIA IR CAMBIANDO
-    //                       character.position.y,
-    //                       character.position.z - 3 ); //Donde empiezan a salir
-    // world.addBody(boxBody);
+    // const charShape = new CANNON.Box(new CANNON.Vec3(character.dimensions.width,
+    //                                                  character.dimensions.height,
+    //                                                  character.dimensions.depth));
+    // const charBody = new CANNON.Body( {mass:0} );
+    
+    // charBody.addShape(charShape);
+    // charBody.position.set( character.startPosition.x,
+    //                        character.position.y,
+    //                        character.position.z);
+    // world.addBody(charBody);
 
     //Agregar como objetos de la clase
     this.objectsDim = objD;
@@ -123,6 +124,20 @@ class Scene extends Component {
                             .add( new THREE.Vector3(-this.props.force,0,0)
                             .multiplyScalar(character.maxDepth) );   
     this.setState( { character:{...character,position:newPos} } );
+  }
+
+  renderObjects(){
+    const {bodies} = this.world;
+    const {position,quaternion} = bodies[0];
+    const {geoId,materialId} = this.objectsDim;
+    return (
+      <Cube
+        geometryId={geoId}
+        materialId={materialId}
+        position={new THREE.Vector3().copy(position)}
+        quaternion={new THREE.Quaternion().copy(quaternion)}>
+      </Cube>
+    );
   }
 
   renderCharacter(){
@@ -180,20 +195,6 @@ class Scene extends Component {
           resourceId={this.objectsDim.materialId}
           color={0x88FF88}/>
       </resources>
-    );
-  }
-
-  renderObjects(){
-    const {bodies} = this.world;
-    const {position,quaternion} = bodies[0];
-    const {geoId,materialId} = this.objectsDim;
-    return (
-      <Cube
-        geometryId={geoId}
-        materialId={materialId}
-        position={new THREE.Vector3().copy(position)}
-        quaternion={new THREE.Quaternion().copy(quaternion)}>
-      </Cube>
     );
   }
 
