@@ -126,7 +126,10 @@ class Scene extends Component {
     const {character} = this.state;
     const newPos = character.startPosition.clone()
                             .add( new THREE.Vector3(-this.props.force,0,0)
-                            .multiplyScalar(character.maxDepth) );   
+                            .multiplyScalar(character.maxDepth) );
+    
+    //Actualizar tanto el personaje con su estado como el objeto del mundo
+    this.world.bodies[0].position.set(newPos.x, newPos.y, newPos.z);
     this.setState( { character:{...character,position:newPos} } );
   }
 
