@@ -12,7 +12,7 @@ import thunk from 'redux-thunk'
 import ReduxPromise from 'redux-promise';
 
 //Components
-import App from './components/app';
+import Scene from './components/scene';
 
 const middleware = [thunk,ReduxPromise];
 const createStoreWithMiddleware = applyMiddleware(...middleware)(createStore);
@@ -23,7 +23,7 @@ ReactDOM.render(
   	<BrowserRouter>
   	  <div>
   	  	<Switch>
-	  	  	<Route path='/' component={App}/>
+	  	  	<Route path='/' component={Scene}/>
   	  	</Switch>
   	  </div>
   	</BrowserRouter>
