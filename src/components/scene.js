@@ -5,6 +5,12 @@ import * as THREE from 'three';
 import PropTypes from 'prop-types';
 import Cube from './cube';
 
+const pressureConfig = {
+  polyfill: true,
+  polyfillSpeedUp: 1000,
+  polyfillSpeedDown: 1000
+};
+
 class Scene extends Component {
   constructor(props, context) {
     super(props, context);
@@ -202,4 +208,4 @@ class Scene extends Component {
   }
 }
 
-export default Pressure(Scene) ;
+export default Pressure(Scene,pressureConfig) ;
