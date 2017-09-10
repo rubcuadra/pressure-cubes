@@ -1,5 +1,4 @@
 import React,{Component} from 'react';
-import React3 from 'react-three-renderer';
 import * as THREE from 'three';
 import PropTypes from 'prop-types';
 
@@ -11,24 +10,16 @@ class Cube extends Component {
   };
 
   render() {
-    const {
-      position,
-      quaternion,
-    } = this.props;
+    const {position,quaternion} = this.props;
+    return (
+      <mesh
+        position={position}
+        quaternion={quaternion}
+        scale={meshScale}
+        castShadow>
 
-    return (<mesh
-      position={position}
-      quaternion={quaternion}
-      scale={meshScale}
-
-      castShadow
-    >
-      <geometryResource
-        resourceId="cubeGeo"
-      />
-      <materialResource
-        resourceId="cubeMaterial"
-      />
+      <geometryResource resourceId={this.props.geometryId}/>
+      <materialResource resourceId={this.props.materialId}/>
     </mesh>);
   }
 }
