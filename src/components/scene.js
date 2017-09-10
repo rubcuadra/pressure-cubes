@@ -24,7 +24,7 @@ class Scene extends Component {
   
     // Configure scene
     this.shadowD = 20;
-    this.fog = new THREE.Fog(0x001525, 10, 0);
+    this.fog = new THREE.Fog(0x001525, 10, 40);
     this.shadowDition = new THREE.Vector3(this.shadowD,this.shadowD,this.shadowD);
     this.lightTarget = new THREE.Vector3(0, 0, 0);
     this.groundQuaternion = new THREE.Quaternion()
