@@ -104,9 +104,9 @@ class Scene extends Component {
       geoId:"charGeo",
       materialId:"charMat",
       dimensions:{
-        width:0.5,
-        height:0.5,
-        depth:0.5
+        width:0.25,
+        height:0.25,
+        depth:0.25
       }
     };
   }
