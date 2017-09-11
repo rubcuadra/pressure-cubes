@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import * as actions from '../actions';
+import './controls.css';
 
 class Controls extends Component{
 	onPauseClick(){
@@ -12,7 +13,9 @@ class Controls extends Component{
 
 	render(){
 		return (
-			<button onClick={this.onPauseClick.bind(this)}> {this.props.paused?"Resume":"Pause"} </button>
+			<nav>
+				<button className="pause-btn" onClick={this.onPauseClick.bind(this)}> {this.props.paused?"Resume":"Pause"}</button>
+			</nav>
 	  );
 	}
 }

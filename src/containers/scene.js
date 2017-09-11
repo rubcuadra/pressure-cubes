@@ -262,9 +262,6 @@ class Scene extends Component {
 
   render() {
     const {width, height} = this.state;
-    
-    if (height>width)
-      return (<div>Rotate your device or expand your window horizontally!</div>);
 
     return (
       <React3
