@@ -15,6 +15,23 @@ const pressureConfig = {
 
 class Scene extends Component {
 
+  updateDimensions() {
+    this.setState({width: window.window.innerWidth, height: window.innerHeight});
+    this.forceUpdate();
+  }
+
+  componentWillMount() {
+    this.updateDimensions();
+  }
+
+  componentDidMount() {
+    window.addEventListener("resize", this.updateDimensions.bind(this) );
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.updateDimensions.bind(this) );
+  }
+
   shouldComponentUpdate(){
     //No queremos se renderee excepto 
     //cuando lo dice la escena(Usando force)
@@ -73,7 +90,7 @@ class Scene extends Component {
     groundBody.position.set(0,0,3.5); //Pared Vertical, nos sirve para saber cuales ya se fueron
     groundBody.addEventListener("collide", this.onPlaneCollision.bind(this));
     world.addBody(groundBody);
-    // groundBody.collisionResponse = false;
+    groundBody.collisionResponse = false; //Para que no se vea que rebotan
     //Agregar como objetos de la clase
     this.objectsDim = objD;
     this._onAnimate = this._onAnimate.bind(this);
@@ -93,7 +110,6 @@ class Scene extends Component {
                                                     this.objectsDim.depth));
     const boxBody = new CANNON.Body({mass});
     boxBody.addShape(boxShape);
-
     boxBody.position.set( startPosition.x - Math.random()*maxDepth, //ESTE y Z DEBERIA IR CAMBIANDO
                           startPosition.y,
                           startPosition.z - 5); //Donde empiezan a salir
@@ -241,7 +257,8 @@ class Scene extends Component {
   }
 
   render() {
-    const [width, height] = [window.window.innerWidth,window.innerHeight];
+    const {width, height} = this.state;
+
     if (height>width)
       return (<div>Rotate your device or expand your window horizontally!</div>);
 
