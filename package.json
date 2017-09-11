@@ -1,7 +1,23 @@
 {
   "name": "3dcube",
+  "repository": {
+    "url": "https://github.com/rubcuadra/react-pressure"
+  },
+  "keywords": [
+    "react",
+    "3d",
+    "touch",
+    "pressure",
+    "webgl",
+    "three",
+    "render"
+  ],
+  "author": {
+    "name": "Ruben Cuadra",
+    "email": "rubcuadra@gmail.com",
+    "url": "http://github.com/rubcuadra"
+  },
   "version": "0.1.0",
-  "private": true,
   "dependencies": {
     "cannon": "^0.6.2",
     "gh-pages": "^1.0.0",
@@ -20,10 +36,12 @@
     "three": "^0.87.1"
   },
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },
-  "homepage": "https://rubcuadra.github.io/pressure-cubes",
+  "homepage": "https://rubcuadra.github.io/pressure-cubes"
 }
