@@ -16,7 +16,11 @@ const pressureConfig = {
 class Scene extends Component {
 
   updateDimensions() {
-    this.setState({width: window.window.innerWidth, height: window.innerHeight});
+    const width = window.window.innerWidth;
+    let height = window.innerHeight;
+
+    if (height>width) height = width; //Para que no se vea tan raro
+    this.setState({width,height});
     this.forceUpdate();
   }
 
@@ -258,7 +262,7 @@ class Scene extends Component {
 
   render() {
     const {width, height} = this.state;
-
+    
     if (height>width)
       return (<div>Rotate your device or expand your window horizontally!</div>);
 
