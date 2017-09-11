@@ -52,9 +52,10 @@ class Scene extends Component {
     this.width = 100;
     this.height = 100;
     // Configure scene
+    this.light = {x:20,y:20,z:20};
     this.shadowD = 20;
     this.fog = new THREE.Fog(0x001525, 10, 40);
-    this.shadowDition = new THREE.Vector3(this.shadowD,this.shadowD,this.shadowD);
+    this.shadowDition = new THREE.Vector3(this.light.x,this.light.y,this.light.z);
     this.lightTarget = new THREE.Vector3(0, 0, 0);
     this.groundQuaternion = new THREE.Quaternion()
       .setFromAxisAngle(new THREE.Vector3(1, 0, 0), -Math.PI / 2);
