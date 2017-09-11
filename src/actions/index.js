@@ -1,25 +1,17 @@
-//REQUIERE REDUX_THUNK como MIDLEWERE
-// import Firebase from 'firebase';
-// const Posts = new Firebase('https://firebaseproject.firebaseio.com/');
-// export function fetchPost(){
-// 	return dispatch => {
-// 		Posts.on('value', snapshot=>{
-// 			dispatch({
-// 				type: 'FETCH_POST',
-// 				payload: snapshot.val()
-// 			});
-// 		});
-// 	};
-// }
+import {GAME_CONTINUE,GAME_PAUSE} from './types';
 
-// export function createPost(post){
-// 	return dispatch => {
-// 		Posts.push(post);	
-// 	};
-// }
+export function pauseGame()
+{
+	return {
+			type: GAME_PAUSE,
+			payload: true
+	};
+}
 
-// export function deletePost(key){
-// 	return dispatch => {
-// 		Posts.child(key).remove();	
-// 	};
-// }
+export function resumeGame()
+{
+	return {
+			type: GAME_CONTINUE,
+			payload: false
+	};
+}

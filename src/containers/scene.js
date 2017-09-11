@@ -3,7 +3,8 @@ import Pressure from 'react-pressure';
 import React3 from 'react-three-renderer';
 import * as THREE from 'three';
 import CANNON from 'cannon/src/Cannon';
-import Cube from './cube';
+import Cube from '../components/cube';
+import {connect} from 'react-redux';
 
 const pressureConfig = {
   polyfill: true,
@@ -17,6 +18,11 @@ class Scene extends Component {
     //No queremos se renderee excepto 
     //cuando lo dice la escena(Usando force)
     return false; 
+  }
+  componentWillReceiveProps(nextProps){
+    //Solo cuando cambie paused renderearemos
+    if (this.props.paused != nextProps.paused)
+      this.forceUpdate();
   }
 
   constructor(props, context) {
@@ -216,7 +222,7 @@ class Scene extends Component {
         width={width}
         height={height}
         clearColor={this.fog.color}
-        onAnimate={this._onAnimate}
+        onAnimate={this.props.paused?null:this._onAnimate}
         gammaInput
         gammaOutput
         shadowMapEnabled>
@@ -265,4 +271,8 @@ class Scene extends Component {
   }
 }
 
-export default Pressure(Scene,pressureConfig) ;
+function mapStateToProps({paused}){
+  return {paused};
+}
+
+export default connect(mapStateToProps)(Pressure(Scene,pressureConfig)) ;

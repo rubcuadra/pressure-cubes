@@ -1,11 +1,8 @@
 import { combineReducers } from 'redux';
-// import { reducer as formReducer } from 'redux-form';
-// import SomeReducer from './reducer_some';
+import GameStatusReducer from './gameReducer';
 
 const rootReducer = combineReducers({
-	// something: SomeReducer,
-	// form: formReducer  
-	state: (state = {}) => state
+	paused:GameStatusReducer
 });
 
 export default rootReducer;

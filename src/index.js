@@ -12,7 +12,8 @@ import thunk from 'redux-thunk'
 import ReduxPromise from 'redux-promise';
 
 //Components
-import Scene from './components/scene';
+import Scene from './containers/scene';
+import Controls from './containers/controls';
 
 const middleware = [thunk,ReduxPromise];
 const createStoreWithMiddleware = applyMiddleware(...middleware)(createStore);
@@ -22,6 +23,7 @@ ReactDOM.render(
   <Provider store={ createStoreWithMiddleware(reducers) }>
   	<BrowserRouter>
   	  <div>
+        <Controls/>
   	  	<Switch>
 	  	  	<Route path='/' component={Scene}/>
   	  	</Switch>
