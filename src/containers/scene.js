@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import React,{Component} from 'react';
 import Pressure from 'react-pressure';
 import React3 from 'react-three-renderer';
@@ -49,8 +50,6 @@ class Scene extends Component {
     world.quatNormalizeFast = false;
     world.gravity.set(0, 0, 6); //El cubo caera lateralmente <-
     world.broadphase = new CANNON.NaiveBroadphase();
-    const mass = 5;
-
     //Add Character to World
     const charShape = new CANNON.Box(new CANNON.Vec3(character.dimensions.width,
                                                      character.dimensions.height,
@@ -59,10 +58,10 @@ class Scene extends Component {
     
     charBody.addShape(charShape);
     charBody.position.set( character.startPosition.x,
-                           character.position.y,
-                           character.position.z);
+                           character.startPosition.y,
+                           character.startPosition.z);
     charBody.fixedRotation = true;
-    charBody.addEventListener("collide", this.onCharacterCollision );
+    charBody.addEventListener("collide", this.onCharacterCollision.bind(this) );
     world.addBody(charBody);
 
     //ADD Vertical PLANE to the WORLD
@@ -71,36 +70,43 @@ class Scene extends Component {
     groundBody.addShape(groundShape);
     groundBody.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), -Math.PI);
     groundBody.position.set(0,0,3.5); //Pared Vertical, nos sirve para saber cuales ya se fueron
-    groundBody.addEventListener("collide", this.onPlaneCollision);
+    groundBody.addEventListener("collide", this.onPlaneCollision.bind(this));
     world.addBody(groundBody);
-
-    //ADD 1 BOX TO THE WORLD
-    const boxShape = new CANNON.Box(new CANNON.Vec3(objD.width,objD.height,objD.depth));
-    const boxBody = new CANNON.Body({mass});
-    boxBody.addShape(boxShape);
-    boxBody.position.set( 3, //ESTE y Z DEBERIA IR CAMBIANDO
-                          character.position.y,
-                          character.position.z - 3 ); //Donde empiezan a salir
-    world.addBody(boxBody);
-
+    // groundBody.collisionResponse = false;
     //Agregar como objetos de la clase
     this.objectsDim = objD;
     this._onAnimate = this._onAnimate.bind(this);
-    this.onCharacterCollision = this.onCharacterCollision.bind(this);
-    this.onPlaneCollision = this.onPlaneCollision.bind(this)
     this.timeStep = 1 / 60; //Evaluate gravity per second
     this.world = world;
+    this.toDelete = new Set();
+    this.maxObjects = 5;
+    this.rateAppearance = 10;
     //Poner el estado
     this.state = {character};
+    //Agregar un obstaculo
+    this.createObstacle();
+  }
+  //ADD 1 BOX TO THE WORLD
+  createObstacle(mass=5){
+    const {startPosition,maxDepth} = this.state.character;
+    const boxShape = new CANNON.Box(new CANNON.Vec3(this.objectsDim.width,
+                                                    this.objectsDim.height,
+                                                    this.objectsDim.depth));
+    const boxBody = new CANNON.Body({mass});
+    boxBody.addShape(boxShape);
+
+    boxBody.position.set( startPosition.x - Math.random()*maxDepth, //ESTE y Z DEBERIA IR CAMBIANDO
+                          startPosition.y,
+                          startPosition.z - 5); //Donde empiezan a salir
+    this.world.addBody(boxBody);
   }
 
   onCharacterCollision(collision){
-    console.log(collision);
+    // console.log(collision);
   }
 
   onPlaneCollision( {contact} ){
-    const collidedBody = contact.bj;
-    console.log(collidedBody.id);
+    this.toDelete.add(contact.bj);
   }
 
   //Las dimensiones son en relacion al character
@@ -133,6 +139,15 @@ class Scene extends Component {
 
   _updateWorld(){
     this.world.step(this.timeStep);
+    
+    if (this.world.bodies.length<this.maxObjects && Math.random()*100<this.rateAppearance)
+    {this.createObstacle();}
+
+    if (this.toDelete.size>0) 
+    {
+      this.toDelete.forEach(body=>this.world.removeBody(body));
+      this.toDelete.clear();
+    } 
   }
 
   _onAnimate() {
@@ -147,7 +162,6 @@ class Scene extends Component {
     const newPos = character.startPosition.clone()
                             .add( new THREE.Vector3(-this.props.force,0,0)
                             .multiplyScalar(character.maxDepth) );
-    
     //Actualizar tanto el personaje con su estado como el objeto del mundo
     this.world.bodies[0].position.set(newPos.x, newPos.y, newPos.z);
     this.setState( { character:{...character,position:newPos} } );
