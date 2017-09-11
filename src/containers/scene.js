@@ -28,7 +28,8 @@ class Scene extends Component {
 
   constructor(props, context) {
     super(props, context);
-  
+    this.width = 100;
+    this.height = 100;
     // Configure scene
     this.shadowD = 20;
     this.fog = new THREE.Fog(0x001525, 10, 40);
@@ -83,8 +84,6 @@ class Scene extends Component {
     this.rateAppearance = 10;
     //Poner el estado
     this.state = {character};
-    //Agregar un obstaculo
-    this.createObstacle();
   }
   //ADD 1 BOX TO THE WORLD
   createObstacle(mass=5){
@@ -121,7 +120,7 @@ class Scene extends Component {
   }
 
   resetCharacter(){
-    const position = new THREE.Vector3(3,1,1.5);
+    const position = new THREE.Vector3(2.5,1,1.5);
     return {
       position,
       maxDepth: 10,
@@ -242,7 +241,10 @@ class Scene extends Component {
   }
 
   render() {
-    const [width, height] = [1500,800];
+    const [width, height] = [window.window.innerWidth,window.innerHeight];
+    if (height>width)
+      return (<div>Rotate your device or expand your window horizontally!</div>);
+
     return (
       <React3
         antialias
