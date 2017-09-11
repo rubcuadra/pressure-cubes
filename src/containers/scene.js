@@ -61,6 +61,8 @@ class Scene extends Component {
     charBody.position.set( character.startPosition.x,
                            character.position.y,
                            character.position.z);
+    charBody.fixedRotation = true;
+    charBody.addEventListener("collide", this.onCharacterCollision );
     world.addBody(charBody);
 
     //ADD Vertical PLANE to the WORLD
@@ -69,6 +71,7 @@ class Scene extends Component {
     groundBody.addShape(groundShape);
     groundBody.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), -Math.PI);
     groundBody.position.set(0,0,3.5); //Pared Vertical, nos sirve para saber cuales ya se fueron
+    groundBody.addEventListener("collide", this.onPlaneCollision);
     world.addBody(groundBody);
 
     //ADD 1 BOX TO THE WORLD
@@ -83,10 +86,21 @@ class Scene extends Component {
     //Agregar como objetos de la clase
     this.objectsDim = objD;
     this._onAnimate = this._onAnimate.bind(this);
+    this.onCharacterCollision = this.onCharacterCollision.bind(this);
+    this.onPlaneCollision = this.onPlaneCollision.bind(this)
     this.timeStep = 1 / 60; //Evaluate gravity per second
     this.world = world;
     //Poner el estado
     this.state = {character};
+  }
+
+  onCharacterCollision(collision){
+    console.log(collision);
+  }
+
+  onPlaneCollision( {contact} ){
+    const collidedBody = contact.bj;
+    console.log(collidedBody.id);
   }
 
   //Las dimensiones son en relacion al character
