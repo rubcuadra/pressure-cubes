@@ -102,23 +102,35 @@ class Scene extends Component {
     this.timeStep = 1 / 60; //Evaluate gravity per second
     this.world = world;
     this.toDelete = new Set();
-    this.maxObjects = 5;
+    this.currentMaxObjects = 5;
+    this.maxSceneObjects = 50;
     this.rateAppearance = 10;
     //Poner el estado
     this.state = {character};
   }
   //ADD 1 BOX TO THE WORLD
   createObstacle(mass=5){
+    const _type = 43;
     const {startPosition,maxDepth} = this.state.character;
-    const boxShape = new CANNON.Box(new CANNON.Vec3(this.objectsDim.width,
+    let objShape = null;
+    const objBody = new CANNON.Body({mass});
+    switch (_type){
+      case 0: 
+        objShape = new CANNON.Cylinder(this.objectsDim.width/2,this.objectsDim.width/2,this.objectsDim.height,10);
+        break;
+      case 1: 
+        objShape = new CANNON.Sphere(this.objectsDim.width);
+      default: //Box
+        objShape = new CANNON.Box(new CANNON.Vec3(this.objectsDim.width,
                                                     this.objectsDim.height,
                                                     this.objectsDim.depth));
-    const boxBody = new CANNON.Body({mass});
-    boxBody.addShape(boxShape);
-    boxBody.position.set( startPosition.x - Math.random()*maxDepth, //ESTE y Z DEBERIA IR CAMBIANDO
+        break;
+    }
+    objBody.addShape(objShape);
+    objBody.position.set( startPosition.x - Math.random()*maxDepth, //ESTE y Z DEBERIA IR CAMBIANDO
                           startPosition.y,
                           startPosition.z - 5); //Donde empiezan a salir
-    this.world.addBody(boxBody);
+    this.world.addBody(objBody);
   }
 
   onCharacterCollision(collision){
@@ -132,8 +144,9 @@ class Scene extends Component {
   //Las dimensiones son en relacion al character
   getObjectsConfig({width,height,depth}){
     return {
-      geoId:"objGeo",
+      geoId:"cubeGeo",
       materialId:"matGeo",
+      icoGeoId:"icoGeo",
       width: width/2,
       height: height/2,
       depth: depth/2,
@@ -160,7 +173,7 @@ class Scene extends Component {
   _updateWorld(){
     this.world.step(this.timeStep);
     
-    if (this.world.bodies.length<this.maxObjects && Math.random()*100<this.rateAppearance)
+    if (this.world.bodies.length<this.currentMaxObjects && Math.random()*100<this.rateAppearance)
     {this.createObstacle();}
 
     if (this.toDelete.size>0) 
@@ -253,6 +266,11 @@ class Scene extends Component {
           depth={this.objectsDim.depth}
           widthSegments={10}
           heightSegments={10}/>
+
+        <icosahedronGeometry
+          resourceId={this.objectsDim.icoGeoId}
+          radius={this.objectsDim.width}
+          detail={0}/>
 
         <meshPhongMaterial
           resourceId={this.objectsDim.materialId}
