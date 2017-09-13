@@ -7,6 +7,13 @@ import CANNON from 'cannon/src/Cannon';
 import Cube from '../components/cube';
 import {connect} from 'react-redux';
 
+const BODY_TYPES={
+  CYLINDER:CANNON.Shape.types.CYLINDER,
+  SPHERE:CANNON.Shape.types.SPHERE,
+  BOX: CANNON.Shape.types.BOX,
+  PLANE: CANNON.Shape.types.PLANE,
+};
+
 const pressureConfig = {
   polyfill: true,
   polyfillSpeedUp: 1000,
@@ -110,20 +117,24 @@ class Scene extends Component {
   }
   //ADD 1 BOX TO THE WORLD
   createObstacle(mass=5){
-    const _type = 43;
+    const _type = BODY_TYPES.BOX;
     const {startPosition,maxDepth} = this.state.character;
     let objShape = null;
     const objBody = new CANNON.Body({mass});
     switch (_type){
-      case 0: 
+      case BODY_TYPES.CYLINDER: 
         objShape = new CANNON.Cylinder(this.objectsDim.width/2,this.objectsDim.width/2,this.objectsDim.height,10);
         break;
-      case 1: 
+      case BODY_TYPES.SPHERE: 
         objShape = new CANNON.Sphere(this.objectsDim.width);
-      default: //Box
+        break;
+      case BODY_TYPES.BOX:
         objShape = new CANNON.Box(new CANNON.Vec3(this.objectsDim.width,
                                                     this.objectsDim.height,
                                                     this.objectsDim.depth));
+        break;
+      default:
+        throw "Wrong BODY_TYPE on createObstacle";
         break;
     }
     objBody.addShape(objShape);
@@ -202,16 +213,21 @@ class Scene extends Component {
 
   renderObjects(){
     const {geoId,materialId} = this.objectsDim; //Dimensiones para todos, tal vez diferentes?
-    return this.world.bodies.map( ({position,quaternion},i)=>{
+    return this.world.bodies.map( ({position,quaternion,shapes},i)=>{
         if (i>1) 
         {
-          return (
-            <Cube
-              key={i}
-              geometryId={geoId}
-              materialId={materialId}
-              position={new THREE.Vector3().copy(position)}
-              quaternion={new THREE.Quaternion().copy(quaternion)}/>);
+          switch(shapes[0].type){
+            case BODY_TYPES.BOX:    
+              return (
+                <Cube
+                  key={i}
+                  geometryId={geoId}
+                  materialId={materialId}
+                  position={new THREE.Vector3().copy(position)}
+                  quaternion={new THREE.Quaternion().copy(quaternion)}/>);
+            default:
+              throw "ERROR WRONG BODY_TYPE ON renderObjects";
+          }
         }
     });   
   }
