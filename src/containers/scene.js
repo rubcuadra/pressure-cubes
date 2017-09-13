@@ -220,10 +220,12 @@ class Scene extends Component {
               return (
                 <Cube
                   key={i}
-                  geometryId={geoId}
-                  materialId={materialId}
+                  color={0x0FF0F0}
                   position={new THREE.Vector3().copy(position)}
-                  quaternion={new THREE.Quaternion().copy(quaternion)}/>);
+                  quaternion={new THREE.Quaternion().copy(quaternion)}
+                  width={this.objectsDim.width}
+                  height={this.objectsDim.height}
+                  depth={this.objectsDim.depth}/>);
             case BODY_TYPES.CYLINDER: 
                 // return (
                 // <cylinder
@@ -246,10 +248,12 @@ class Scene extends Component {
     const {position,quaternion,geoId,materialId} = this.state.character; 
     return (
       <Cube
-        geometryId={geoId}
-        materialId={materialId}
         position={position}
-        quaternion={quaternion}>
+        quaternion={quaternion}
+        color={0x777777}
+        width={this.state.character.dimensions.width}
+        height={this.state.character.dimensions.height}
+        depth={this.state.character.dimensions.depth}>
       </Cube>
     );
   }
@@ -271,36 +275,6 @@ class Scene extends Component {
     );
   }
 
-  addResources(){
-    return (
-      <resources>
-        <boxGeometry
-          resourceId={this.state.character.geoId}
-          width={this.state.character.dimensions.width}
-          height={this.state.character.dimensions.height}
-          depth={this.state.character.dimensions.depth}
-          widthSegments={1}
-          heightSegments={1}/>
-          
-        <meshPhongMaterial
-          resourceId={this.state.character.materialId}
-          color={0x888888}/>
-
-        <boxGeometry
-          resourceId={this.objectsDim.geoId}
-          width={this.objectsDim.width}
-          height={this.objectsDim.height}
-          depth={this.objectsDim.depth}
-          widthSegments={10}
-          heightSegments={10}/>
-
-        <meshPhongMaterial
-          resourceId={this.objectsDim.materialId}
-          color={0x88FF88}/>
-      </resources>
-    );
-  }
-
   render() {
     const {width, height} = this.state;
 
@@ -315,8 +289,6 @@ class Scene extends Component {
         gammaInput
         gammaOutput
         shadowMapEnabled>
-        
-        {this.addResources()}
         
         <scene
           ref="scene"

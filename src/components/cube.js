@@ -3,14 +3,18 @@ import * as THREE from 'three';
 import PropTypes from 'prop-types';
 
 const meshScale = new THREE.Vector3(1, 1, 1).multiplyScalar(2);
-class Mesh extends Component {
+class Cube extends Component {
   static propTypes = {
     position: PropTypes.instanceOf(THREE.Vector3).isRequired,
     quaternion: PropTypes.instanceOf(THREE.Quaternion).isRequired,
+    width: PropTypes.number.isRequired,
+    height: PropTypes.number.isRequired,
+    depth: PropTypes.number.isRequired
   };
-
+  //0x88FF88
   render() {
-    const {position,quaternion} = this.props;
+    const {position,quaternion,width,height,depth,color} = this.props;
+
     return (
       <mesh
         position={position}
@@ -18,9 +22,17 @@ class Mesh extends Component {
         scale={meshScale}
         castShadow>
 
-      <geometryResource resourceId={this.props.geometryId}/>
-      <materialResource resourceId={this.props.materialId}/>
+        <boxGeometry
+          width= {width}
+          height= {height}
+          depth= {depth}
+          widthSegments={1}
+          heightSegments={1}/>
+
+        <meshPhongMaterial
+          color={color}/>
+
     </mesh>);
   }
 }
-export default Mesh;
+export default Cube;
