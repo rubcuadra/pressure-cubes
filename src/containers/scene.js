@@ -157,7 +157,6 @@ class Scene extends Component {
     return {
       geoId:"cubeGeo",
       materialId:"matGeo",
-      icoGeoId:"icoGeo",
       width: width/2,
       height: height/2,
       depth: depth/2,
@@ -225,6 +224,17 @@ class Scene extends Component {
                   materialId={materialId}
                   position={new THREE.Vector3().copy(position)}
                   quaternion={new THREE.Quaternion().copy(quaternion)}/>);
+            case BODY_TYPES.CYLINDER: 
+                // return (
+                // <cylinder
+                //   key={i}
+                //   geometryId={geoId}
+                //   materialId={materialId}
+                //   position={new THREE.Vector3().copy(position)}
+                //   quaternion={new THREE.Quaternion().copy(quaternion)}/>);              
+              break;
+            case BODY_TYPES.SPHERE: 
+              break;
             default:
               throw "ERROR WRONG BODY_TYPE ON renderObjects";
           }
@@ -271,6 +281,7 @@ class Scene extends Component {
           depth={this.state.character.dimensions.depth}
           widthSegments={1}
           heightSegments={1}/>
+          
         <meshPhongMaterial
           resourceId={this.state.character.materialId}
           color={0x888888}/>
@@ -282,11 +293,6 @@ class Scene extends Component {
           depth={this.objectsDim.depth}
           widthSegments={10}
           heightSegments={10}/>
-
-        <icosahedronGeometry
-          resourceId={this.objectsDim.icoGeoId}
-          radius={this.objectsDim.width}
-          detail={0}/>
 
         <meshPhongMaterial
           resourceId={this.objectsDim.materialId}

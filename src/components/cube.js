@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import PropTypes from 'prop-types';
 
 const meshScale = new THREE.Vector3(1, 1, 1).multiplyScalar(2);
-class Cube extends Component {
+class Mesh extends Component {
   static propTypes = {
     position: PropTypes.instanceOf(THREE.Vector3).isRequired,
     quaternion: PropTypes.instanceOf(THREE.Quaternion).isRequired,
@@ -23,4 +23,4 @@ class Cube extends Component {
     </mesh>);
   }
 }
-export default Cube;
+export default Mesh;
