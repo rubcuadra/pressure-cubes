@@ -10,7 +10,7 @@ class Cylinder extends Component {
     radius: PropTypes.number.isRequired,
     height: PropTypes.number.isRequired,
   };
-  //0x88FF88
+
   render() {
     const {position,quaternion,height,radius,color} = this.props;
 
