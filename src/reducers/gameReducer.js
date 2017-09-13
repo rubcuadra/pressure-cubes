@@ -6,6 +6,7 @@ export default function(state=true,action){
 			return action.payload;
 		case GAME_PAUSE:
 			return action.payload;
+		default:
+			return state;
 	} 
-	return state;
 }

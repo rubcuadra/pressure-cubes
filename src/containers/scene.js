@@ -1,11 +1,16 @@
-import _ from 'lodash';
 import React,{Component} from 'react';
 import Pressure from 'react-pressure';
 import React3 from 'react-three-renderer';
 import * as THREE from 'three';
 import CANNON from 'cannon/src/Cannon';
 import Cube from '../components/cube';
+import Cylinder from '../components/cylinder';
 import {connect} from 'react-redux';
+
+function BodyTypeException(msg){
+  this.message = msg;
+  this.name = "BodyTypeException"
+}
 
 const BODY_TYPES={
   CYLINDER:CANNON.Shape.types.CYLINDER,
@@ -50,8 +55,11 @@ class Scene extends Component {
   }
   componentWillReceiveProps(nextProps){
     //Solo cuando cambie paused renderearemos
-    if (this.props.paused != nextProps.paused)
+    if (this.props.paused !== nextProps.paused)
+    {
+      console.log("Pause switch");
       this.forceUpdate();
+    }
   }
 
   constructor(props, context) {
@@ -134,8 +142,7 @@ class Scene extends Component {
                                                     this.objectsDim.depth));
         break;
       default:
-        throw "Wrong BODY_TYPE on createObstacle";
-        break;
+        throw new BodyTypeException("Wrong type on createObstacle");
     }
     objBody.addShape(objShape);
     objBody.position.set( startPosition.x - Math.random()*maxDepth, //ESTE y Z DEBERIA IR CAMBIANDO
@@ -155,8 +162,6 @@ class Scene extends Component {
   //Las dimensiones son en relacion al character
   getObjectsConfig({width,height,depth}){
     return {
-      geoId:"cubeGeo",
-      materialId:"matGeo",
       width: width/2,
       height: height/2,
       depth: depth/2,
@@ -170,8 +175,6 @@ class Scene extends Component {
       maxDepth: 10,
       startPosition: position.clone(),
       quaternion: new THREE.Quaternion(),
-      geoId:"charGeo",
-      materialId:"charMat",
       dimensions:{
         width:0.25,
         height:0.25,
@@ -211,7 +214,6 @@ class Scene extends Component {
   }
 
   renderObjects(){
-    const {geoId,materialId} = this.objectsDim; //Dimensiones para todos, tal vez diferentes?
     return this.world.bodies.map( ({position,quaternion,shapes},i)=>{
         if (i>1) 
         {
@@ -227,25 +229,28 @@ class Scene extends Component {
                   height={this.objectsDim.height}
                   depth={this.objectsDim.depth}/>);
             case BODY_TYPES.CYLINDER: 
-                // return (
-                // <cylinder
-                //   key={i}
-                //   geometryId={geoId}
-                //   materialId={materialId}
-                //   position={new THREE.Vector3().copy(position)}
-                //   quaternion={new THREE.Quaternion().copy(quaternion)}/>);              
-              break;
+                return (
+                <Cylinder
+                  key={i}
+                  color={0x0FF0F0}
+                  position={new THREE.Vector3().copy(position)}
+                  quaternion={new THREE.Quaternion().copy(quaternion)}
+                  width={this.objectsDim.width}
+                  height={this.objectsDim.height}
+                  depth={this.objectsDim.depth}/>);             
             case BODY_TYPES.SPHERE: 
+              
               break;
             default:
-              throw "ERROR WRONG BODY_TYPE ON renderObjects";
+              throw new BodyTypeException("Wrong type on renderObjects");
           }
+          return null;
         }
     });   
   }
 
   renderCharacter(){
-    const {position,quaternion,geoId,materialId} = this.state.character; 
+    const {position,quaternion} = this.state.character; 
     return (
       <Cube
         position={position}
