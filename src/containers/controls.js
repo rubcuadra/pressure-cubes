@@ -30,8 +30,8 @@ class Controls extends Component{
 		return (
 			<div>
 				<nav>
-					<h3 className="centered">{this.getFormatedSeconds(this.props.time)}</h3>
-					<button className="pause-btn" onClick={this.onPauseClick.bind(this)}> {this.props.paused?"Resume":"Pause"}</button>					
+					<h3 className="centered timer">{this.getFormatedSeconds(this.props.time)}</h3>
+					<button className="pause-btn" onClick={this.onPauseClick.bind(this)}> {this.props.paused?"Resume":"Pause"}</button>										
 				</nav>
 				{this.props.paused?<h1 className="centered message">PAUSED</h1>:""}
 			</div>

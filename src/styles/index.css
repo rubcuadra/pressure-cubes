@@ -11,18 +11,19 @@ nav{
 	position: fixed;
 	top: 0;
 	width: 100%;	
+	text-align: center;
 }
 
 .pause-btn{
 	float: right;
 	display: block;
-	/*color: #f2f2f2;*/
 	text-align: center;
 	padding: 14px 16px;
 	margin: 8px;
 	background-color: #f2f2f2;
 	font-size: 12px;
 }
+
 .centered{
 	text-align: center;
 	color: white;
@@ -33,4 +34,8 @@ nav{
 .message{
 	top: 50vmin;
 	font-size: 40px;
+}
+
+.timer{
+	z-index: -1;
 }
