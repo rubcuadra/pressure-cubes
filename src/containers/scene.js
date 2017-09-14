@@ -11,7 +11,7 @@ import {connect} from 'react-redux';
 
 function BodyTypeException(msg){
   this.message = msg;
-  this.name = "BodyTypeException"
+  this.name = "BodyTypeException";
 }
 
 const BODY_TYPES={
@@ -23,7 +23,7 @@ const BODY_TYPES={
 const pressureConfig = {
   polyfill: true,
   polyfillSpeedUp: 1000,
-  polyfillSpeedDown: 1000
+  polyfillSpeedDown: 1000,
 };
 
 class Scene extends Component {
@@ -371,4 +371,4 @@ function mapStateToProps({paused}){
   return {paused};
 }
 
-export default connect(mapStateToProps)(Pressure(Scene,pressureConfig)) ;
+export default connect(mapStateToProps)(Pressure(Scene,pressureConfig) ) ;
