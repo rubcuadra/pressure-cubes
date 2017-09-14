@@ -1,3 +1,4 @@
+import {values,sample} from 'lodash';
 import React,{Component} from 'react';
 import Pressure from 'react-pressure';
 import React3 from 'react-three-renderer';
@@ -17,7 +18,6 @@ const BODY_TYPES={
   CYLINDER:CANNON.Shape.types.CONVEXPOLYHEDRON,
   SPHERE:CANNON.Shape.types.SPHERE,
   BOX: CANNON.Shape.types.BOX,
-  PLANE: CANNON.Shape.types.PLANE,
 };
 
 const pressureConfig = {
@@ -125,7 +125,7 @@ class Scene extends Component {
   }
   //ADD 1 BOX TO THE WORLD
   createObstacle(mass=5){
-    const _type = BODY_TYPES.BOX;
+    const _type = sample(values(BODY_TYPES)); //Vienen de lodash
     const {startPosition,maxDepth} = this.state.character;
     let objShape = null;
     const objBody = new CANNON.Body({mass});
@@ -145,9 +145,9 @@ class Scene extends Component {
         throw new BodyTypeException("Wrong type on createObstacle");
     }
     objBody.addShape(objShape);
-    objBody.position.set( startPosition.x, //- Math.random()*maxDepth, //ESTE y Z DEBERIA IR CAMBIANDO
+    objBody.position.set( startPosition.x-Math.random()*maxDepth, //ESTE y Z DEBERIA IR CAMBIANDO
                           startPosition.y,
-                          startPosition.z - 5); //Donde empiezan a salir
+                          startPosition.z - 5); //Donde empiezan a salir    
     this.world.addBody(objBody);
   }
 
