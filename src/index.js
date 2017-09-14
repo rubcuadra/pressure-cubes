@@ -19,8 +19,7 @@ import Controls from './containers/controls';
 const middleware = [thunk,timerMiddleware];
 const createStoreWithMiddleware = applyMiddleware(...middleware)(createStore);
 const store = createStoreWithMiddleware(reducers);
-store.dispatch(initMainTimer());
-
+// store.dispatch(initMainTimer());
 ReactDOM.render(
   <Provider store={ store }>
   	<BrowserRouter>

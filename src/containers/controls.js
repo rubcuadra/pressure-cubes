@@ -1,29 +1,46 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import * as actions from '../actions';
+import moment from 'moment';
 
 class Controls extends Component{
 	onPauseClick(){
 		if (this.props.paused) 
+		{
 			this.props.resumeGame();
+			this.props.startTimer()
+		}	
 		else
+		{
 			this.props.pauseGame();
+			this.props.stopTimer()
+		}
+	}
+	getFormatedSeconds(seconds){
+		const t = new Date(seconds * 1000);
+		const h = t.getUTCHours();
+		const m = t.getUTCMinutes();
+		const s = t.getSeconds();
+		return `${h>9?h:`0${h}`} :
+				${m>9?m:`0${m}`} :
+				${s>9?s:`0${s}`}`;
 	}
 
 	render(){
 		return (
 			<div>
 				<nav>
-					<button className="pause-btn" onClick={this.onPauseClick.bind(this)}> {this.props.paused?"Resume":"Pause"}</button>
+					<h3 className="centered">{this.getFormatedSeconds(this.props.time)}</h3>
+					<button className="pause-btn" onClick={this.onPauseClick.bind(this)}> {this.props.paused?"Resume":"Pause"}</button>					
 				</nav>
-				{this.props.paused?<h1 className="centered-text">PAUSED</h1>:""}
+				{this.props.paused?<h1 className="centered message">PAUSED</h1>:""}
 			</div>
 	  );
 	}
 }
 
-function mapStateToProps({paused}){
-	return { paused }
+function mapStateToProps({paused,time}){
+	return {paused,time}
 }
 
 export default connect(mapStateToProps, actions)(Controls) ;

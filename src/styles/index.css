@@ -23,12 +23,14 @@ nav{
 	background-color: #f2f2f2;
 	font-size: 12px;
 }
-
-.centered-text{
-	position: absolute; 
-	top: 50vmin;
+.centered{
 	text-align: center;
 	color: white;
-	font-size: 40px;
+	position: absolute; 
 	width: 100%;
+}
+
+.message{
+	top: 50vmin;
+	font-size: 40px;
 }
