@@ -106,7 +106,7 @@ class Scene extends Component {
     const groundBody = new CANNON.Body({ mass: 0 });
     groundBody.addShape(groundShape);
     groundBody.quaternion.setFromAxisAngle(new CANNON.Vec3(1, 0, 0), -Math.PI);
-    groundBody.position.set(0,0,3.5); //Pared Vertical, nos sirve para saber cuales ya se fueron
+    groundBody.position.set(0,0,6); //Pared Vertical, nos sirve para saber cuales ya se fueron
     groundBody.addEventListener("collide", this.onPlaneCollision.bind(this));
     world.addBody(groundBody);
     groundBody.collisionResponse = true; //Para que no se vea que rebotan
@@ -115,11 +115,8 @@ class Scene extends Component {
     this.timeStep = 1 / 60; //Evaluate gravity per second
     this.world = world;
     this.toDelete = new Set(); //Cuando chocan se agregan aqui en lugar de ser borrados de golpe
-    this.currentMaxObjects = 5;
-    this.maxSceneObjects = 50;
-    this.rateAppearance = 10;
     //Poner el estado
-    this.state = {character,obstacles:this.getObjectsConfig(character.dimensions)};
+    this.state = {character, difficulty:this.getDifficulty(),obstacles:this.getObjectsConfig(character.dimensions)};
   }
   //ADD 1 BOX TO THE WORLD
   createObstacle(mass=5){
@@ -148,12 +145,22 @@ class Scene extends Component {
         throw new BodyTypeException("Wrong type on createObstacle");
     }
     objBody.addShape(objShape);
-    // objBody.angularVelocity.set(10, 10, 0); //Con esto los ponemos a girar
-    // objBody.angularDamping = 0.5;
+    if (this.state.difficulty.rotation) 
+    { 
+      const {x,y,z} = this.getRandomVector(-10,10,-10,10,-10,10);
+      objBody.angularVelocity.set(x,y,z); //Con esto los ponemos a girar
+      objBody.angularDamping = Math.random();  
+    }
     objBody.position.set( startPosition.x-Math.random()*maxDepth, //ESTE y Z DEBERIA IR CAMBIANDO
                           startPosition.y,
                           startPosition.z - 5); //Donde empiezan a salir    
     this.world.addBody(objBody);
+  }
+
+  getRandomVector(xMin,xMax,yMin,yMax,zMin,zMax){
+    return {x:xMin + Math.random()*(xMax-xMin),
+            y:yMin + Math.random()*(yMax-yMin),
+            z:zMin + Math.random()*(zMax-zMin)};
   }
 
   onCharacterCollision(collision){
@@ -162,6 +169,15 @@ class Scene extends Component {
 
   onPlaneCollision( {body} ){
     this.toDelete.add(body);
+  }
+
+  getDifficulty(){
+    return {
+            rotation:false,
+            rateAppearance:10, //Probability of that obj to appear
+            currentMax:5,      //This will be modified with time
+            maximum:50         //Must remain constant, max objects on scene
+      };
   }
 
   //Las dimensiones son en relacion al character
@@ -207,9 +223,12 @@ class Scene extends Component {
 
   _updateWorld(){
     this.world.step(this.timeStep);
-    
-    if (this.world.bodies.length<this.currentMaxObjects && Math.random()*100<this.rateAppearance)
-    {this.createObstacle();}
+    const {currentMax,rateAppearance} = this.state.difficulty
+    if (this.world.bodies.length<currentMax  && 
+        Math.random()*100<rateAppearance)
+    {
+      this.createObstacle();
+    }
 
     if (this.toDelete.size>0) //Si tenemos pendientes por borrar...hacerlo
     {
