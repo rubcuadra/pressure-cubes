@@ -12,9 +12,12 @@ class Controls extends Component{
 
 	render(){
 		return (
-			<nav>
-				<button className="pause-btn" onClick={this.onPauseClick.bind(this)}> {this.props.paused?"Resume":"Pause"}</button>
-			</nav>
+			<div>
+				<nav>
+					<button className="pause-btn" onClick={this.onPauseClick.bind(this)}> {this.props.paused?"Resume":"Pause"}</button>
+				</nav>
+				{this.props.paused?<h1 className="centered-text">PAUSED</h1>:""}
+			</div>
 	  );
 	}
 }

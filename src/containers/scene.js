@@ -86,6 +86,7 @@ class Scene extends Component {
     world.quatNormalizeFast = false;
     world.gravity.set(0, 0, 6); //El cubo caera lateralmente <-
     world.broadphase = new CANNON.NaiveBroadphase();
+    world.solver.iterations = 10;
     //Add Character to World
     const charShape = new CANNON.Box(new CANNON.Vec3(character.dimensions.width,
                                                      character.dimensions.height,
@@ -147,6 +148,8 @@ class Scene extends Component {
         throw new BodyTypeException("Wrong type on createObstacle");
     }
     objBody.addShape(objShape);
+    // objBody.angularVelocity.set(10, 10, 0); //Con esto los ponemos a girar
+    // objBody.angularDamping = 0.5;
     objBody.position.set( startPosition.x-Math.random()*maxDepth, //ESTE y Z DEBERIA IR CAMBIANDO
                           startPosition.y,
                           startPosition.z - 5); //Donde empiezan a salir    
@@ -304,60 +307,62 @@ class Scene extends Component {
       </mesh>
     );
   }
-
+  
   render() {
     const {width, height} = this.state;
 
     return (
-      <React3
-        antialias
-        mainCamera="camera"
-        width={width}
-        height={height}
-        clearColor={this.fog.color}
-        onAnimate={this.props.paused?null:this._onAnimate}
-        gammaInput
-        gammaOutput
-        shadowMapEnabled>
-        
-        <scene
-          ref="scene"
-          fog={this.fog}>
+      <div>
+        <React3
+          antialias
+          mainCamera="camera"
+          width={width}
+          height={height}
+          clearColor={this.fog.color}
+          onAnimate={this.props.paused?null:this._onAnimate}
+          gammaInput
+          gammaOutput
+          shadowMapEnabled>
+          
+          <scene
+            ref="scene"
+            fog={this.fog}>
 
-          <perspectiveCamera
-            name="camera"
-            fov={30}
-            aspect={width / height}
-            near={0.5}
-            far={10000}
-            position={this.cameraPosition}
-            quaternion={this.cameraQuaternion}
-            ref="camera"/>
+            <perspectiveCamera
+              name="camera"
+              fov={30}
+              aspect={width / height}
+              near={0.5}
+              far={10000}
+              position={this.cameraPosition}
+              quaternion={this.cameraQuaternion}
+              ref="camera"/>
 
-          <ambientLight
-            color={0x666666}/>
+            <ambientLight
+              color={0x666666}/>
 
-          <directionalLight
-            color={0xffffff}
-            intensity={1.75}
-            shadowMapWidth={1024}
-            shadowMapHeight={1024}
-            shadowCameraLeft={-this.shadowD}
-            shadowCameraRight={this.shadowD}
-            shadowCameraTop={this.shadowD}
-            shadowCameraBottom={-this.shadowD}
-            shadowCameraFar={3 * this.shadowD}
-            shadowCameraNear={this.shadowD}
-            position={this.shadowDition}
-            lookAt={this.lightTarget}
-            castShadow/>
+            <directionalLight
+              color={0xffffff}
+              intensity={1.75}
+              shadowMapWidth={2048}
+              shadowMapHeight={2048}
+              shadowCameraLeft={-this.shadowD}
+              shadowCameraRight={this.shadowD}
+              shadowCameraTop={this.shadowD}
+              shadowCameraBottom={-this.shadowD}
+              shadowCameraFar={3 * this.shadowD}
+              shadowCameraNear={this.shadowD}
+              position={this.shadowDition}
+              lookAt={this.lightTarget}
+              castShadow/>
+            
+            {this.renderFloor()}
+            {this.renderCharacter()}
+            {this.renderObjects()}
 
-          {this.renderFloor()}
-          {this.renderCharacter()}
-          {this.renderObjects()}
-
-        </scene>
-      </React3>
+          </scene>
+        </React3>
+      </div>
     );
   }
 }
