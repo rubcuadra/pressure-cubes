@@ -20,10 +20,16 @@ const BODY_TYPES={
   BOX: CANNON.Shape.types.BOX,
 };
 
+function isMobile() {
+  try{ document.createEvent("TouchEvent"); return true; }
+  catch(e){ return false; }
+}
+
 const pressureConfig = {
   polyfill: true,
   polyfillSpeedUp: 1000,
-  polyfillSpeedDown: 1000
+  polyfillSpeedDown: 1000,
+  only: isMobile()?"touch":null
 };
 
 class Scene extends Component {
