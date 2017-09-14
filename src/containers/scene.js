@@ -21,8 +21,12 @@ const BODY_TYPES={
 };
 
 function isMobile() {
-  try{ document.createEvent("TouchEvent"); return true; }
-  catch(e){ return false; }
+  testExp = new RegExp('Android|webOS|iPhone|iPad|' +
+                  'BlackBerry|Windows Phone|'  +
+                  'Opera Mini|IEMobile|Mobile','i');
+  return testExp.test(navigator.userAgent);
+  // try{ document.createEvent("TouchEvent"); return true; }
+  // catch(e){ return false; }
 }
 
 const pressureConfig = {
