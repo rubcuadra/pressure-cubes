@@ -5,6 +5,7 @@ import * as THREE from 'three';
 import CANNON from 'cannon/src/Cannon';
 import Cube from '../components/cube';
 import Cylinder from '../components/cylinder';
+import Sphere from '../components/sphere';
 import {connect} from 'react-redux';
 
 function BodyTypeException(msg){
@@ -13,7 +14,7 @@ function BodyTypeException(msg){
 }
 
 const BODY_TYPES={
-  CYLINDER:CANNON.Shape.types.CYLINDER,
+  CYLINDER:CANNON.Shape.types.CONVEXPOLYHEDRON,
   SPHERE:CANNON.Shape.types.SPHERE,
   BOX: CANNON.Shape.types.BOX,
   PLANE: CANNON.Shape.types.PLANE,
@@ -56,8 +57,7 @@ class Scene extends Component {
   componentWillReceiveProps(nextProps){
     //Solo cuando cambie paused renderearemos
     if (this.props.paused !== nextProps.paused)
-    {
-      console.log("Pause switch");
+    {      
       this.forceUpdate();
     }
   }
@@ -145,7 +145,7 @@ class Scene extends Component {
         throw new BodyTypeException("Wrong type on createObstacle");
     }
     objBody.addShape(objShape);
-    objBody.position.set( startPosition.x - Math.random()*maxDepth, //ESTE y Z DEBERIA IR CAMBIANDO
+    objBody.position.set( startPosition.x, - Math.random()*maxDepth, //ESTE y Z DEBERIA IR CAMBIANDO
                           startPosition.y,
                           startPosition.z - 5); //Donde empiezan a salir
     this.world.addBody(objBody);
@@ -189,7 +189,7 @@ class Scene extends Component {
     if (this.world.bodies.length<this.currentMaxObjects && Math.random()*100<this.rateAppearance)
     {this.createObstacle();}
 
-    if (this.toDelete.size>0) 
+    if (this.toDelete.size>0) //Si tenemos pendientes por borrar...hacerlo
     {
       this.toDelete.forEach(body=>this.world.removeBody(body));
       this.toDelete.clear();
@@ -209,6 +209,7 @@ class Scene extends Component {
                             .add( new THREE.Vector3(-this.props.force,0,0)
                             .multiplyScalar(character.maxDepth) );
     //Actualizar tanto el personaje con su estado como el objeto del mundo
+    //0 por que se debe llamar esta funcion en cuanto se crea el world
     this.world.bodies[0].position.set(newPos.x, newPos.y, newPos.z);
     this.setState( { character:{...character,position:newPos} } );
   }
@@ -218,34 +219,40 @@ class Scene extends Component {
         if (i>1) 
         {
           switch(shapes[0].type){
-            case BODY_TYPES.BOX:    
+            case BODY_TYPES.BOX:
+              const {x,y,z} = shapes[0].halfExtents;
               return (
                 <Cube
                   key={i}
-                  color={0x0FF0F0}
+                  color={0x88FF88}
                   position={new THREE.Vector3().copy(position)}
                   quaternion={new THREE.Quaternion().copy(quaternion)}
-                  width={this.objectsDim.width}
-                  height={this.objectsDim.height}
-                  depth={this.objectsDim.depth}/>);
-            case BODY_TYPES.CYLINDER: 
-                return (
+                  width={x}
+                  height={y}
+                  depth={z}/>);
+            case BODY_TYPES.CYLINDER:
+              return (
                 <Cylinder
                   key={i}
                   color={0x0FF0F0}
                   position={new THREE.Vector3().copy(position)}
                   quaternion={new THREE.Quaternion().copy(quaternion)}
-                  width={this.objectsDim.width}
-                  height={this.objectsDim.height}
-                  depth={this.objectsDim.depth}/>);             
+                  radius={shapes[0].boundingSphereRadius*0.35}
+                  height={this.objectsDim.height}/>);             
             case BODY_TYPES.SPHERE: 
-              
-              break;
+              console.log(position);
+              return (
+                <Sphere
+                  key={i}
+                  color={0x50F050}
+                  position={new THREE.Vector3().copy(position)}
+                  quaternion={new THREE.Quaternion().copy(quaternion)}
+                  radius={ shapes[0].radius/2 }/>); 
             default:
               throw new BodyTypeException("Wrong type on renderObjects");
           }
-          return null;
         }
+        return null;
     });   
   }
 
