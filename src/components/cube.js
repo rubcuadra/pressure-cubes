@@ -26,8 +26,8 @@ class Cube extends Component {
           width= {width}
           height= {height}
           depth= {depth}
-          widthSegments={1}
-          heightSegments={1}/>
+          widthSegments={10}
+          heightSegments={10}/>
 
         <meshPhongMaterial
           color={color}/>

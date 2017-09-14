@@ -110,7 +110,7 @@ class Scene extends Component {
     groundBody.position.set(0,0,3.5); //Pared Vertical, nos sirve para saber cuales ya se fueron
     groundBody.addEventListener("collide", this.onPlaneCollision.bind(this));
     world.addBody(groundBody);
-    groundBody.collisionResponse = false; //Para que no se vea que rebotan
+    groundBody.collisionResponse = true; //Para que no se vea que rebotan
     //Agregar como objetos de la clase
     this.objectsDim = objD;
     this._onAnimate = this._onAnimate.bind(this);
@@ -145,7 +145,7 @@ class Scene extends Component {
         throw new BodyTypeException("Wrong type on createObstacle");
     }
     objBody.addShape(objShape);
-    objBody.position.set( startPosition.x, - Math.random()*maxDepth, //ESTE y Z DEBERIA IR CAMBIANDO
+    objBody.position.set( startPosition.x, //- Math.random()*maxDepth, //ESTE y Z DEBERIA IR CAMBIANDO
                           startPosition.y,
                           startPosition.z - 5); //Donde empiezan a salir
     this.world.addBody(objBody);
@@ -155,8 +155,8 @@ class Scene extends Component {
     // console.log(collision);
   }
 
-  onPlaneCollision( {contact} ){
-    this.toDelete.add(contact.bj);
+  onPlaneCollision( {body} ){
+    this.toDelete.add(body);
   }
 
   //Las dimensiones son en relacion al character
@@ -240,7 +240,6 @@ class Scene extends Component {
                   radius={shapes[0].boundingSphereRadius*0.35}
                   height={this.objectsDim.height}/>);             
             case BODY_TYPES.SPHERE: 
-              console.log(position);
               return (
                 <Sphere
                   key={i}

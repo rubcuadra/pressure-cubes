@@ -3,16 +3,15 @@ import * as THREE from 'three';
 import PropTypes from 'prop-types';
 
 const meshScale = new THREE.Vector3(1, 1, 1).multiplyScalar(2);
-class Cylinder extends Component {
+class Sphere extends Component {
   static propTypes = {
     position: PropTypes.instanceOf(THREE.Vector3).isRequired,
     quaternion: PropTypes.instanceOf(THREE.Quaternion).isRequired,
-    radius: PropTypes.number.isRequired,
-    height: PropTypes.number.isRequired,
+    radius: PropTypes.number.isRequired
   };
 
   render() {
-    const {position,quaternion,height,radius,color} = this.props;
+    const {position,quaternion,radius,color} = this.props;
 
     return (
       <mesh
@@ -21,11 +20,9 @@ class Cylinder extends Component {
         scale={meshScale}
         castShadow>
 
-        <cylinderGeometry
-          radiusTop = {radius}
-          height= {height}
-          radiusBottom = {radius}
-          radialSegments={10}
+        <sphereGeometry
+          radius = {radius}
+          widthSegments={10}
           heightSegments={10}/>
 
         <meshPhongMaterial
@@ -34,4 +31,4 @@ class Cylinder extends Component {
     </mesh>);
   }
 }
-export default Cylinder;
+export default Sphere;
