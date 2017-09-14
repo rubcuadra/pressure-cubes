@@ -170,13 +170,50 @@ class Scene extends Component {
   onPlaneCollision( {body} ){
     this.toDelete.add(body);
   }
+  
+  increaseLevel(){
+    const {level,delta,deltaRateAppearence,rotation,rateAppearance,maxRateAppearance,currentMax,maximum} = this.state.difficulty;
+    
+    switch(level){
+      case -1:
+        return;
+      case 1:
+        return this.setState({currentMax:currentMax+delta});
+      case 2:
+        return this.setState({rotation:true});
+      case 3:
+        return this.setState({rateAppearance:rateAppearance+deltaRateAppearence});
+      default://Un random entre 2 y 3, si no puede uno que haga el otro, si no puede ninguno de los dos que ponga lvl max
+        if ( Math.random()>0.5 ) //Validar primero que se puede aumentar OBJs
+        {
+          if (currentMax<maximum) //Aumentar objetos
+            return this.setState({currentMax:currentMax+delta});
+          else if(maxRateAppearance>rateAppearance) //Aumentar Probabilidad
+            return this.setState({rateAppearance:rateAppearance+deltaRateAppearence});
+          else
+            return this.setState({level:-1});
+        }
+        else{ //Validar primero el rate
+          if(maxRateAppearance>rateAppearance) //Aumentar Probabilidad
+            return this.setState({rateAppearance:rateAppearance+deltaRateAppearence});
+          else if (currentMax<maximum) //Aumentar objetos
+            return this.setState({currentMax:currentMax+delta});
+          else
+            return this.setState({level:-1});
+        }
+    }
+  }
 
   getDifficulty(){
     return {
-            rotation:false,
-            rateAppearance:10, //Probability of that obj to appear
-            currentMax:5,      //This will be modified with time
-            maximum:50         //Must remain constant, max objects on scene
+            level:1,
+            rotation:false,         //Rotating figures
+            rateAppearance:10,      //Probability of that obj to appear
+            deltaRateAppearence:10, //How much it increases
+            maxRateAppearance:50,   //Max Probability of that obj to appear
+            currentMax:5,           //This will be modified with time
+            delta:5,                //Each level how many objs are added
+            maximum:50              //Must remain constant, max objects on scene
       };
   }
 
