@@ -172,11 +172,12 @@ class Scene extends Component {
   }
   
   increaseLevel(){
-    const {level,delta,deltaRateAppearence,rotation,rateAppearance,maxRateAppearance,currentMax,maximum} = this.state.difficulty;
-    
+    const {level,delta,deltaRateAppearence,rateAppearance,maxRateAppearance,currentMax,maximum} = this.state.difficulty;
     switch(level){
       case -1:
         return;
+      case 0:
+        break;
       case 1:
         return this.setState({currentMax:currentMax+delta});
       case 2:
@@ -200,13 +201,13 @@ class Scene extends Component {
             return this.setState({currentMax:currentMax+delta});
           else
             return this.setState({level:-1});
-        }
+      }
     }
   }
 
   getDifficulty(){
     return {
-            level:1,
+            level:0,
             rotation:false,         //Rotating figures
             rateAppearance:10,      //Probability of that obj to appear
             deltaRateAppearence:10, //How much it increases
