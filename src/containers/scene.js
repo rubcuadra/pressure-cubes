@@ -80,8 +80,6 @@ class Scene extends Component {
     
     //init Character and objectsDimensions
     const character = this.resetCharacter();
-    const objD = this.getObjectsConfig(character.dimensions);
-    
     //INIT CANNON
     const world = new CANNON.World();
     world.quatNormalizeSkip = 0;
@@ -112,16 +110,15 @@ class Scene extends Component {
     world.addBody(groundBody);
     groundBody.collisionResponse = true; //Para que no se vea que rebotan
     //Agregar como objetos de la clase
-    this.objectsDim = objD;
     this._onAnimate = this._onAnimate.bind(this);
     this.timeStep = 1 / 60; //Evaluate gravity per second
     this.world = world;
-    this.toDelete = new Set();
+    this.toDelete = new Set(); //Cuando chocan se agregan aqui en lugar de ser borrados de golpe
     this.currentMaxObjects = 5;
     this.maxSceneObjects = 50;
     this.rateAppearance = 10;
     //Poner el estado
-    this.state = {character};
+    this.state = {character,obstacles:this.getObjectsConfig(character.dimensions)};
   }
   //ADD 1 BOX TO THE WORLD
   createObstacle(mass=5){
@@ -131,15 +128,20 @@ class Scene extends Component {
     const objBody = new CANNON.Body({mass});
     switch (_type){
       case BODY_TYPES.CYLINDER: 
-        objShape = new CANNON.Cylinder(this.objectsDim.width/2,this.objectsDim.width/2,this.objectsDim.height,10);
+        const {cylinder} = this.state.obstacles;
+        const r = cylinder.min_radius; //Aqui hacer modificaciones de size
+        const h = cylinder.min_height; //Modificar la altura aqui  
+        objShape = new CANNON.Cylinder(r,r,h,10);
         break;
       case BODY_TYPES.SPHERE: 
-        objShape = new CANNON.Sphere(this.objectsDim.width);
+        const {sphere} = this.state.obstacles
+        objShape = new CANNON.Sphere(sphere.min_radius);
         break;
       case BODY_TYPES.BOX:
-        objShape = new CANNON.Box(new CANNON.Vec3(this.objectsDim.width,
-                                                    this.objectsDim.height,
-                                                    this.objectsDim.depth));
+        const {box} = this.state.obstacles
+        objShape = new CANNON.Box(new CANNON.Vec3(box.min_width,
+                                                  box.min_height,
+                                                  box.min_depth));
         break;
       default:
         throw new BodyTypeException("Wrong type on createObstacle");
@@ -162,9 +164,26 @@ class Scene extends Component {
   //Las dimensiones son en relacion al character
   getObjectsConfig({width,height,depth}){
     return {
-      width: width/2,
-      height: height/2,
-      depth: depth/2,
+      box:{
+        min_width: width/2,
+        min_height: height/2,
+        min_depth: depth/2,
+
+        max_width: width,
+        max_height: height,
+        max_depth: depth
+      },
+      sphere:{
+        min_radius:width/2,
+        max_radius:width
+      },
+      cylinder:{
+        min_radius:width/2,
+        min_height: height/2,
+
+        max_radius:width,
+        max_height: height
+      }
     };
   }
 
@@ -238,7 +257,7 @@ class Scene extends Component {
                   position={new THREE.Vector3().copy(position)}
                   quaternion={new THREE.Quaternion().copy(quaternion)}
                   radius={shapes[0].boundingSphereRadius*0.35}
-                  height={this.objectsDim.height}/>);             
+                  height={shapes[0].boundingSphereRadius*0.90}/>);             
             case BODY_TYPES.SPHERE: 
               return (
                 <Sphere
