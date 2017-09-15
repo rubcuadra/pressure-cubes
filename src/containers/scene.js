@@ -172,8 +172,8 @@ class Scene extends Component {
   }
   
   increaseLevel(){
-    const {level,delta,deltaRateAppearence,rateAppearance,maxRateAppearance,currentMax,maximum} = this.state.difficulty;
-    switch(level){
+    const {delta,deltaRateAppearence,rateAppearance,maxRateAppearance,currentMax,maximum} = this.state.difficulty;
+    switch(this.props.level){
       case -1:
         return;
       case 0:
@@ -207,7 +207,6 @@ class Scene extends Component {
 
   getDifficulty(){
     return {
-            level:0,
             rotation:false,         //Rotating figures
             rateAppearance:10,      //Probability of that obj to appear
             deltaRateAppearence:10, //How much it increases
@@ -424,8 +423,8 @@ class Scene extends Component {
   }
 }
 
-function mapStateToProps({paused}){
-  return {paused};
+function mapStateToProps({paused,level}){
+  return {paused,level};
 }
 
 export default connect(mapStateToProps)(Pressure(Scene,pressureConfig) ) ;
