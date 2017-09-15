@@ -134,20 +134,22 @@ class Scene extends Component {
     const objBody = new CANNON.Body({mass});
     switch (_type){
       case BODY_TYPES.CYLINDER: 
-        const {cylinder} = this.state.obstacles;
-        const r = cylinder.min_radius; //Aqui hacer modificaciones de size
-        const h = cylinder.min_height; //Modificar la altura aqui  
-        objShape = new CANNON.Cylinder(r,r,h,10);
+        const { min_radius,max_radius,min_height,max_height } = this.state.obstacles.cylinder;
+        const r = this.randomBetween(min_radius,max_radius);
+        const hc = this.randomBetween(min_height,max_height);
+        objShape = new CANNON.Cylinder(r,r,hc,10);
         break;
       case BODY_TYPES.SPHERE: 
-        const {sphere} = this.state.obstacles
-        objShape = new CANNON.Sphere(sphere.min_radius);
+        const { sphere } = this.state.obstacles;
+        const sp_r = this.randomBetween(sphere.min_radius,sphere.max_radius);
+        objShape = new CANNON.Sphere( sp_r );
         break;
       case BODY_TYPES.BOX:
         const {box} = this.state.obstacles
-        objShape = new CANNON.Box(new CANNON.Vec3(box.min_width,
-                                                  box.min_height,
-                                                  box.min_depth));
+        const w = this.randomBetween(box.min_width,box.max_width);
+        const h = this.randomBetween(box.min_height,box.min_height);
+        const d = this.randomBetween(box.min_depth,box.max_depth);
+        objShape = new CANNON.Box(new CANNON.Vec3(w,w,w));
         break;
       default:
         throw new BodyTypeException("Wrong type on createObstacle");
@@ -164,11 +166,14 @@ class Scene extends Component {
                           startPosition.z - 5); //Donde empiezan a salir    
     this.world.addBody(objBody);
   }
+  randomBetween(_from,_to){
+    return _from+Math.random()*(_to-_from);
+  }
 
   getRandomVector(xMin,xMax,yMin,yMax,zMin,zMax){
-    return {x:xMin + Math.random()*(xMax-xMin),
-            y:yMin + Math.random()*(yMax-yMin),
-            z:zMin + Math.random()*(zMax-zMin)};
+    return {x:this.randomBetween(xMin,xMax),
+            y:this.randomBetween(yMin,yMax),
+            z:this.randomBetween(zMin,zMax)};
   }
 
   onCharacterCollision(collision){
@@ -236,24 +241,24 @@ class Scene extends Component {
   getObjectsConfig({width,height,depth}){
     return {
       box:{
-        min_width: width/2,
-        min_height: height/2,
-        min_depth: depth/2,
+        min_width: width*0.25,
+        min_height: height*0.25,
+        min_depth: depth*0.25,
 
-        max_width: width,
-        max_height: height,
-        max_depth: depth
+        max_width: width*0.5,
+        max_height: height*0.5,
+        max_depth: depth*0.5
       },
       sphere:{
-        min_radius:width/2,
-        max_radius:width
+        min_radius:width*0.25,
+        max_radius:width*0.50
       },
       cylinder:{
-        min_radius:width/2,
-        min_height: height/2,
+        min_radius:width*0.25,
+        min_height: height*0.25,
 
-        max_radius:width,
-        max_height: height
+        max_radius: width*0.75,
+        max_height: height*0.75
       }
     };
   }
