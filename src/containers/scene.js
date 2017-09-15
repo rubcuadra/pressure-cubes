@@ -8,6 +8,7 @@ import Cube from '../components/cube';
 import Cylinder from '../components/cylinder';
 import Sphere from '../components/sphere';
 import { connect } from 'react-redux';
+import rMC from 'random-material-color';
 
 function BodyTypeException(msg){
   this.message = msg;
@@ -164,6 +165,7 @@ class Scene extends Component {
     objBody.position.set( startPosition.x-Math.random()*maxDepth, //ESTE y Z DEBERIA IR CAMBIANDO
                           startPosition.y,
                           startPosition.z - 5); //Donde empiezan a salir    
+    objBody._bodyColor = rMC.getColor(); //RandomMaterialColor
     this.world.addBody(objBody);
   }
   randomBetween(_from,_to){
@@ -312,7 +314,7 @@ class Scene extends Component {
   }
 
   renderObjects(){
-    return this.world.bodies.map( ({position,quaternion,shapes},i)=>{
+    return this.world.bodies.map( ({position,quaternion,shapes,_bodyColor},i)=>{
         if (i>1) 
         {
           switch(shapes[0].type){
@@ -321,7 +323,7 @@ class Scene extends Component {
               return (
                 <Cube
                   key={i}
-                  color={0x88FF88}
+                  color={_bodyColor}
                   position={new THREE.Vector3().copy(position)}
                   quaternion={new THREE.Quaternion().copy(quaternion)}
                   width={x}
@@ -331,7 +333,7 @@ class Scene extends Component {
               return (
                 <Cylinder
                   key={i}
-                  color={0x0FF0F0}
+                  color={_bodyColor}
                   position={new THREE.Vector3().copy(position)}
                   quaternion={new THREE.Quaternion().copy(quaternion)}
                   radius={shapes[0].boundingSphereRadius*0.35}
@@ -340,7 +342,7 @@ class Scene extends Component {
               return (
                 <Sphere
                   key={i}
-                  color={0x50F050}
+                  color={_bodyColor}
                   position={new THREE.Vector3().copy(position)}
                   quaternion={new THREE.Quaternion().copy(quaternion)}
                   radius={ shapes[0].radius/2 }/>); 
