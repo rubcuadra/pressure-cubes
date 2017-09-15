@@ -122,7 +122,7 @@ class Scene extends Component {
     this.world = world;
     this.toDelete = new Set(); //Cuando chocan se agregan aqui en lugar de ser borrados de golpe
     //Poner el estado
-    this.state = {character, level:0, difficulty:this.getDifficulty(), obstacles:this.getObjectsConfig(character.dimensions)};
+    this.state = {character, level:1, difficulty:this.getDifficulty(), obstacles:this.getObjectsConfig(character.dimensions)};
   }
 
   //ADD 1 BOX TO THE WORLD
@@ -227,7 +227,7 @@ class Scene extends Component {
             deltaRateAppearence:10, //How much it increases
             maxRateAppearance:50,   //Max Probability of that obj to appear
             currentMax:5,           //This will be modified with time
-            delta:5,                //Each level how many objs are added
+            delta:3,                //Each level how many objs are added
             maximum:50              //Must remain constant, max objects on scene
       };
   }
