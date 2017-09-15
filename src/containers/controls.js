@@ -20,6 +20,11 @@ class Controls extends Component{
 		const h = t.getUTCHours();
 		const m = t.getUTCMinutes();
 		const s = t.getSeconds();
+		
+		console.log(this.props.level);
+		if (s===0) 
+			this.props.levelUp()
+
 		return `${h>9?h:`0${h}`} :
 				${m>9?m:`0${m}`} :
 				${s>9?s:`0${s}`}`;
@@ -38,8 +43,8 @@ class Controls extends Component{
 	}
 }
 
-function mapStateToProps({paused,time}){
-	return {paused,time}
+function mapStateToProps({paused,time,level}){
+	return {paused,time,level}
 }
 
 export default connect(mapStateToProps, actions)(Controls) ;
