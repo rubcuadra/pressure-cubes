@@ -77,6 +77,7 @@ class Scene extends Component {
     this.light = {x:20,y:20,z:20};
     this.shadowD = 20;
     this.fog = new THREE.Fog(0x001525, 10, 40);
+    this.fog.color = new THREE.Color(0.14,0.14,0.14);
     this.shadowDition = new THREE.Vector3(this.light.x,this.light.y,this.light.z);
     this.lightTarget = new THREE.Vector3(0, 0, 0);
     this.groundQuaternion = new THREE.Quaternion()
@@ -380,7 +381,7 @@ class Scene extends Component {
           widthSegments={1}
           heightSegments={1}/>
         <meshLambertMaterial
-          color={0x777777}/>
+          color={"#F0F0F0"}/>
       </mesh>
     );
   }
