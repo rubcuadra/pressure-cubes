@@ -54,11 +54,17 @@ class Scene extends Component {
     //cuando lo dice la escena(Usando force)
     return false; 
   }
-  componentWillReceiveProps(nextProps){
+  componentWillReceiveProps({paused,time}){
     //Solo cuando cambie paused renderearemos
-    if (this.props.paused !== nextProps.paused)
+    if (this.props.paused !== paused)
     {      
       this.forceUpdate();
+      return;
+    }
+
+    if (this.props.time !== time) {
+      if (time%30===0) //Aumentar dificultad cada 30 seg
+        this.levelUp();   
     }
   }
 
@@ -120,7 +126,8 @@ class Scene extends Component {
   }
 
   //ADD 1 BOX TO THE WORLD
-  createObstacle(mass=5){
+  createObstacle(){
+    const mass = Math.random()*20 + 0.5;
     const _type = sample(values(BODY_TYPES)); //Vienen de lodash
     const {startPosition,maxDepth} = this.state.character;
     let objShape = null;
@@ -173,40 +180,44 @@ class Scene extends Component {
   }
 
   levelUp(){
-    const {delta,deltaRateAppearence,rateAppearance,maxRateAppearance,currentMax,maximum} = this.state.difficulty;
-    switch(this.state.level)
+    const {difficulty,level} = this.state;
+    const {delta,deltaRateAppearence,rateAppearance,maxRateAppearance,currentMax,maximum} = difficulty;
+    if (level === -1) return;
+
+    this.setState({level:level+1});
+    switch(level)
     {
-      case -1: //MAX LEVEL
-        return;
-      case 0:  //Start
+      case -1,0: //MAX LEVEL
         return;
       case 1:  
-        return this.setState({currentMax:currentMax+delta});
+        this.setState( { difficulty: {...difficulty,currentMax:currentMax+delta} } );
+        break;
       case 2:
-        return this.setState({rotation:true});
+        this.setState( { difficulty:{ ...difficulty,rotation:true } });
+        break;
       case 3:
-        return this.setState({rateAppearance:rateAppearance+deltaRateAppearence});
+        this.setState( {difficulty:{ ...difficulty,rateAppearance:rateAppearance+deltaRateAppearence}});
+        break;
       default: //Un random entre 2 y 3, si no puede uno que haga el otro, si no puede ninguno de los dos que ponga lvl max
         if ( Math.random()>0.5 ) //Validar primero que se puede aumentar OBJs
         {
           if (currentMax<maximum) //Aumentar objetos
-            return this.setState({currentMax:currentMax+delta});
+            return this.setState( {difficulty:{...difficulty,currentMax:currentMax+delta}});
           else if(maxRateAppearance>rateAppearance) //Aumentar Probabilidad
-            return this.setState({rateAppearance:rateAppearance+deltaRateAppearence});
+            return this.setState( {difficulty:{...difficulty,rateAppearance:rateAppearance+deltaRateAppearence}});
           else
             return this.setState({level:-1});
         }
         else
         { //Validar primero el rate
           if(maxRateAppearance>rateAppearance) //Aumentar Probabilidad
-            return this.setState({rateAppearance:rateAppearance+deltaRateAppearence});
+            return this.setState( {difficulty:{...difficulty,rateAppearance:rateAppearance+deltaRateAppearence}});
           else if (currentMax<maximum) //Aumentar objetos
-            return this.setState({currentMax:currentMax+delta});
+            return this.setState( {difficulty:{...difficulty,currentMax:currentMax+delta}});
           else
             return this.setState({level:-1});
         }
     }
-    this.setState({level:this.state.level+1});
   }
 
   getDifficulty(){
