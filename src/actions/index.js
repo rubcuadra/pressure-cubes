@@ -1,7 +1,14 @@
-import { GAME_CONTINUE, GAME_PAUSE, TIMER_TICKED, RESET_LVL, LEVEL_UP } from './types';
+import { GAME_CONTINUE, GAME_PAUSE, TIMER_TICKED, RESET_LVL, LEVEL_UP,MAX_LEVEL } from './types';
 import { START_TIMER,STOP_TIMER } from 'redux-timer-middleware';
 
 export const MAIN_TIMER_NAME = "infiniteTimer";
+
+export function maxLevel(l){
+	return {
+		type: MAX_LEVEL,
+		payload: l,
+	};
+}
 
 export function levelUp(){
 	return {

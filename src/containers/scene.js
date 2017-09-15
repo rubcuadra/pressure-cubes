@@ -8,7 +8,7 @@ import Cube from '../components/cube';
 import Cylinder from '../components/cylinder';
 import Sphere from '../components/sphere';
 import {connect} from 'react-redux';
-
+import {maxLevel} from '../actions';
 function BodyTypeException(msg){
   this.message = msg;
   this.name = "BodyTypeException";
@@ -171,8 +171,9 @@ class Scene extends Component {
     this.toDelete.add(body);
   }
   
-  increaseLevel(){
+  updateLevel(){
     const {delta,deltaRateAppearence,rateAppearance,maxRateAppearance,currentMax,maximum} = this.state.difficulty;
+    
     switch(this.props.level){
       case -1:
         return;
@@ -192,16 +193,17 @@ class Scene extends Component {
           else if(maxRateAppearance>rateAppearance) //Aumentar Probabilidad
             return this.setState({rateAppearance:rateAppearance+deltaRateAppearence});
           else
-            return this.setState({level:-1});
+            return this.props.maxLevel(-1); //Decir que estamos en el max lvl con valor -1
         }
-        else{ //Validar primero el rate
+        else
+        { //Validar primero el rate
           if(maxRateAppearance>rateAppearance) //Aumentar Probabilidad
             return this.setState({rateAppearance:rateAppearance+deltaRateAppearence});
           else if (currentMax<maximum) //Aumentar objetos
             return this.setState({currentMax:currentMax+delta});
           else
-            return this.setState({level:-1});
-      }
+            return this.props.maxLevel(-1);
+        }
     }
   }
 
@@ -427,4 +429,4 @@ function mapStateToProps({paused,level}){
   return {paused,level};
 }
 
-export default connect(mapStateToProps)(Pressure(Scene,pressureConfig) ) ;
+export default connect(mapStateToProps,{maxLevel})(Pressure(Scene,pressureConfig) ) ;
