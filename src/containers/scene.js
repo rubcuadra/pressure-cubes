@@ -7,8 +7,8 @@ import CANNON from 'cannon/src/Cannon';
 import Cube from '../components/cube';
 import Cylinder from '../components/cylinder';
 import Sphere from '../components/sphere';
-import {connect} from 'react-redux';
-import {maxLevel} from '../actions';
+import { connect } from 'react-redux';
+
 function BodyTypeException(msg){
   this.message = msg;
   this.name = "BodyTypeException";
@@ -116,8 +116,9 @@ class Scene extends Component {
     this.world = world;
     this.toDelete = new Set(); //Cuando chocan se agregan aqui en lugar de ser borrados de golpe
     //Poner el estado
-    this.state = {character, difficulty:this.getDifficulty(),obstacles:this.getObjectsConfig(character.dimensions)};
+    this.state = {character, level:0, difficulty:this.getDifficulty(), obstacles:this.getObjectsConfig(character.dimensions)};
   }
+
   //ADD 1 BOX TO THE WORLD
   createObstacle(mass=5){
     const _type = sample(values(BODY_TYPES)); //Vienen de lodash
@@ -170,22 +171,22 @@ class Scene extends Component {
   onPlaneCollision( {body} ){
     this.toDelete.add(body);
   }
-  
-  updateLevel(){
+
+  levelUp(){
     const {delta,deltaRateAppearence,rateAppearance,maxRateAppearance,currentMax,maximum} = this.state.difficulty;
-    
-    switch(this.props.level){
-      case -1:
+    switch(this.state.level)
+    {
+      case -1: //MAX LEVEL
         return;
-      case 0:
-        break;
-      case 1:
+      case 0:  //Start
+        return;
+      case 1:  
         return this.setState({currentMax:currentMax+delta});
       case 2:
         return this.setState({rotation:true});
       case 3:
         return this.setState({rateAppearance:rateAppearance+deltaRateAppearence});
-      default://Un random entre 2 y 3, si no puede uno que haga el otro, si no puede ninguno de los dos que ponga lvl max
+      default: //Un random entre 2 y 3, si no puede uno que haga el otro, si no puede ninguno de los dos que ponga lvl max
         if ( Math.random()>0.5 ) //Validar primero que se puede aumentar OBJs
         {
           if (currentMax<maximum) //Aumentar objetos
@@ -193,7 +194,7 @@ class Scene extends Component {
           else if(maxRateAppearance>rateAppearance) //Aumentar Probabilidad
             return this.setState({rateAppearance:rateAppearance+deltaRateAppearence});
           else
-            return this.props.maxLevel(-1); //Decir que estamos en el max lvl con valor -1
+            return this.setState({level:-1});
         }
         else
         { //Validar primero el rate
@@ -202,9 +203,10 @@ class Scene extends Component {
           else if (currentMax<maximum) //Aumentar objetos
             return this.setState({currentMax:currentMax+delta});
           else
-            return this.props.maxLevel(-1);
+            return this.setState({level:-1});
         }
     }
+    this.setState({level:this.state.level+1});
   }
 
   getDifficulty(){
@@ -279,7 +281,6 @@ class Scene extends Component {
   _onAnimate() {
     this._updateCharacterPosition();
     this._updateWorld();
-
     this.forceUpdate();
   };
 
@@ -425,8 +426,8 @@ class Scene extends Component {
   }
 }
 
-function mapStateToProps({paused,level}){
-  return {paused,level};
+function mapStateToProps({time,paused,level}){
+  return {paused,level,time};
 }
 
-export default connect(mapStateToProps,{maxLevel})(Pressure(Scene,pressureConfig) ) ;
+export default connect(mapStateToProps)(Pressure(Scene,pressureConfig) ) ;
