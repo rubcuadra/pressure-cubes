@@ -10,8 +10,6 @@ import './styles/index.css'; //Cargar hoja de estilos
 //middlewares
 import thunk from 'redux-thunk';
 import timerMiddleware from 'redux-timer-middleware';
-// import ReduxPromise from 'redux-promise';
-import { initMainTimer } from './actions';
 //Components
 import Scene from './containers/scene';
 import Controls from './containers/controls';

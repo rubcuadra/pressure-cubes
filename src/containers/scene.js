@@ -149,8 +149,8 @@ class Scene extends Component {
       case BODY_TYPES.BOX:
         const {box} = this.state.obstacles
         const w = this.randomBetween(box.min_width,box.max_width);
-        const h = this.randomBetween(box.min_height,box.min_height);
-        const d = this.randomBetween(box.min_depth,box.max_depth);
+        // const h = this.randomBetween(box.min_height,box.min_height);
+        // const d = this.randomBetween(box.min_depth,box.max_depth);
         objShape = new CANNON.Box(new CANNON.Vec3(w,w,w));
         break;
       default:
@@ -195,7 +195,8 @@ class Scene extends Component {
     this.setState({level:level+1});
     switch(level)
     {
-      case -1,0: //MAX LEVEL
+      case -1:
+      case  0: //MAX LEVEL
         return;
       case 1:  
         this.setState( { difficulty: {...difficulty,currentMax:currentMax+delta} } );
