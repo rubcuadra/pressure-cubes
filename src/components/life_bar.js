@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 
 class LifeBar extends Component{
 	render(){
-		// console.log(window.innerWidth);
-		// {this.props.life} <i className="fa fa-heart"></i> 
+		if(this.props.life<1) return <div className="lifeBar"/>; 
+		
 		return (
 			<div className="lifeBar"> 
 				{[...Array(this.props.life)].map((_, i)=>{
