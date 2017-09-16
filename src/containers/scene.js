@@ -57,13 +57,7 @@ class Scene extends Component {
     return false; 
   }
   componentWillReceiveProps({paused,time}){
-    //Solo cuando cambie paused renderearemos
-    if (this.props.reset) 
-    {
-      this.resetGame();
-      return;
-    }
-    
+    //Solo cuando cambie paused renderearemos    
     if (this.props.paused !== paused)
     {      
       this.forceUpdate();
@@ -137,7 +131,6 @@ class Scene extends Component {
     this.collided = new Set();
     //Poner el estado
     this.state = {character,level:1, difficulty:this.getDifficulty(), obstacles:this.getObjectsConfig(character.dimensions)};
-    this.props.sceneReseted(); 
   }
 
   //ADD 1 BOX TO THE WORLD
@@ -470,4 +463,4 @@ function mapStateToProps({time,paused,level,hearths}){
   return {paused,level,time,hearths};
 }
 
-export default connect(mapStateToProps, {sceneReseted,reduceHearths,gameOver} )(Pressure(Scene,pressureConfig) ) ;
+export default connect(mapStateToProps, {reduceHearths,gameOver} )(Pressure(Scene,pressureConfig) ) ;
