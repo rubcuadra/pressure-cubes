@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 class LifeBar extends Component{
 	render(){
-		console.log(window.innerWidth);
+		// console.log(window.innerWidth);
 		// {this.props.life} <i className="fa fa-heart"></i> 
 		return (
 			<div className="lifeBar"> 

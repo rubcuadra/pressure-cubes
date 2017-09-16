@@ -22,7 +22,7 @@ class Controls extends Component{
 			<div>
 				<nav>
 					<Timer seconds={this.props.time}/>
-					<LifeBar life={5}/>
+					<LifeBar life={this.props.hearths}/>
 					<button className="pause-btn" onClick={this.onPauseClick.bind(this)}> {this.props.paused?"Resume":"Pause"}</button>										
 				</nav>
 				{this.props.paused?<h1 className="centered message">PAUSED</h1>:""}
@@ -31,8 +31,8 @@ class Controls extends Component{
 	}
 }
 
-function mapStateToProps({paused,time,level}){
-	return {paused,time,level}
+function mapStateToProps({paused,time,level,hearths}){
+	return {paused,time,level,hearths}
 }
 
 export default connect(mapStateToProps, actions)(Controls) ;
