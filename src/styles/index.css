@@ -14,6 +14,17 @@ nav{
 	text-align: center;
 }
 
+.lifeBar{
+	float: left;
+	width: 20%;
+	padding: 14px;
+	margin: 8px;
+	color:white;
+	font-size: 15px;
+	display: flex;
+	justify-content: space-around;
+}
+
 .pause-btn{
 	float: right;
 	display: block;
