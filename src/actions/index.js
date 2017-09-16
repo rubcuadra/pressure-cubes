@@ -53,3 +53,16 @@ export function resumeGame()
 			payload: false
 	};
 }
+export function resetGame(){
+	return (dispatch)=>{
+		dispatch(resetTime());
+		dispatch(increaseHearths());
+	};	
+}
+
+export function gameOver(){
+	return (dispatch)=>{
+		dispatch(pauseGame());
+		dispatch(stopTimer());
+	};
+}

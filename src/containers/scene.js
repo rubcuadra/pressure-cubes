@@ -9,7 +9,7 @@ import Cylinder from '../components/cylinder';
 import Sphere from '../components/sphere';
 import { connect } from 'react-redux';
 import rMC from 'random-material-color';
-import { reduceHearths } from '../actions';
+import { reduceHearths, gameOver } from '../actions';
 
 function BodyTypeException(msg){
   this.message = msg;
@@ -72,8 +72,6 @@ class Scene extends Component {
 
   constructor(props, context) {
     super(props, context);
-    this.width = 100;
-    this.height = 100;
     // Configure scene
     this.light = {x:20,y:20,z:20};
     this.shadowD = 20;
@@ -87,6 +85,12 @@ class Scene extends Component {
     this.cameraQuaternion = new THREE.Quaternion()
       .setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI / 2);
     
+    this.resetGame();
+  }
+
+  resetGame(){
+    this.width = 100;
+    this.height = 100;
     //init Character and objectsDimensions
     const character = this.resetCharacter();
     //INIT CANNON
@@ -123,6 +127,7 @@ class Scene extends Component {
     this._onAnimate = this._onAnimate.bind(this);
     this.timeStep = 1 / 60; //Evaluate gravity per second
     this.world = world;
+
     this.toDelete = new Set(); //Cuando chocan se agregan aqui en lugar de ser borrados de golpe
     this.collided = new Set();
     //Poner el estado
@@ -184,12 +189,15 @@ class Scene extends Component {
   onCharacterCollision({body,target}){
     if (body.id === target.id || this.collided.has(body.id)) 
       return;
-    //Aqui validar el game over?
-    this.collided.add(body.id);
-    this.props.reduceHearths(); 
-    if (this.props.hearths==1) 
-      console.log("GameOver");
-      //this.props.gameOver();
+  
+    this.collided.add(body.id);  
+    if (this.props.hearths==1) { //GameOver
+      this.props.gameOver();
+    }
+    else
+    {
+      this.props.reduceHearths();   
+    }
   }
 
   onPlaneCollision( {body} ){
@@ -459,4 +467,4 @@ function mapStateToProps({time,paused,level,hearths}){
   return {paused,level,time,hearths};
 }
 
-export default connect(mapStateToProps, {reduceHearths} )(Pressure(Scene,pressureConfig) ) ;
+export default connect(mapStateToProps, {reduceHearths,gameOver} )(Pressure(Scene,pressureConfig) ) ;
