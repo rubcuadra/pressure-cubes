@@ -1,14 +1,24 @@
-import { GAME_CONTINUE, GAME_PAUSE, TIMER_TICKED } from './types';
+import { GAME_CONTINUE, GAME_PAUSE, TIMER_TICKED, RESET_TIMER } from './types';
+import { INCREASE_HEARTHS, DECREASE_HEARTHS, RESET_HEARTHS} from './types';
 import { START_TIMER,STOP_TIMER } from 'redux-timer-middleware';
 
 export const MAIN_TIMER_NAME = "infiniteTimer";
 
-// export function initMainTimer(){
-// 	return (dispatch)=>{
-// 		dispatch(startTimer()); //Inicializar
-// 		dispatch(stopTimer());	//Detener
-// 	};
-// }
+export function resetTime(){
+	return { type:RESET_TIMER };	
+}
+
+export function reduceHearths(){
+	return { type:DECREASE_HEARTHS };
+}
+
+export function resetHearths(){
+	return { type:RESET_HEARTHS };
+}
+
+export function increaseHearths(){
+	return { type:INCREASE_HEARTHS };
+}
 
 export function startTimer(timerName=MAIN_TIMER_NAME){
 	return {
