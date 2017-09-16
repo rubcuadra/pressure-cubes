@@ -9,6 +9,7 @@ import Cylinder from '../components/cylinder';
 import Sphere from '../components/sphere';
 import { connect } from 'react-redux';
 import rMC from 'random-material-color';
+import { reduceHearths } from '../actions';
 
 function BodyTypeException(msg){
   this.message = msg;
@@ -123,8 +124,9 @@ class Scene extends Component {
     this.timeStep = 1 / 60; //Evaluate gravity per second
     this.world = world;
     this.toDelete = new Set(); //Cuando chocan se agregan aqui en lugar de ser borrados de golpe
+    this.collided = new Set();
     //Poner el estado
-    this.state = {character, level:1, difficulty:this.getDifficulty(), obstacles:this.getObjectsConfig(character.dimensions)};
+    this.state = {character,level:1, difficulty:this.getDifficulty(), obstacles:this.getObjectsConfig(character.dimensions)};
   }
 
   //ADD 1 BOX TO THE WORLD
@@ -179,8 +181,15 @@ class Scene extends Component {
             z:this.randomBetween(zMin,zMax)};
   }
 
-  onCharacterCollision(collision){
-    // console.log(collision);
+  onCharacterCollision({body,target}){
+    if (body.id === target.id || this.collided.has(body.id)) 
+      return;
+    //Aqui validar el game over?
+    this.collided.add(body.id);
+    this.props.reduceHearths(); 
+    if (this.props.hearths==1) 
+      console.log("GameOver");
+      //this.props.gameOver();
   }
 
   onPlaneCollision( {body} ){
@@ -446,8 +455,8 @@ class Scene extends Component {
   }
 }
 
-function mapStateToProps({time,paused,level}){
-  return {paused,level,time};
+function mapStateToProps({time,paused,level,hearths}){
+  return {paused,level,time,hearths};
 }
 
-export default connect(mapStateToProps)(Pressure(Scene,pressureConfig) ) ;
+export default connect(mapStateToProps, {reduceHearths} )(Pressure(Scene,pressureConfig) ) ;
