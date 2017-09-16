@@ -6,7 +6,7 @@ export default (state=maxHearts,action)=>{
 		case INCREASE_HEARTHS:
 			return state+1;
 		case DECREASE_HEARTHS:
-			return state-1;
+			return state-1>=0?state-1:state;
 		case RESET_HEARTHS:
 			return maxHearts;
 		default:
