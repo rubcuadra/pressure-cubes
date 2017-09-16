@@ -11,8 +11,7 @@ import './styles/css/font-awesome.min.css';
 import thunk from 'redux-thunk';
 import timerMiddleware from 'redux-timer-middleware';
 //Components
-import Scene from './containers/scene';
-import Controls from './containers/controls';
+import CubesGame from './components/cubesGame';
 
 const middleware = [thunk,timerMiddleware];
 const createStoreWithMiddleware = applyMiddleware(...middleware)(createStore);
@@ -22,9 +21,8 @@ ReactDOM.render(
   <Provider store={ store }>
   	<BrowserRouter>
   	  <div>
-        <Controls/>
   	  	<Switch>
-	  	  	<Route path='/' component={Scene}/>
+	  	  	<Route path='/' component={CubesGame}/>
   	  	</Switch>
   	  </div>
   	</BrowserRouter>

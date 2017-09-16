@@ -9,7 +9,7 @@ import Cylinder from '../components/cylinder';
 import Sphere from '../components/sphere';
 import { connect } from 'react-redux';
 import rMC from 'random-material-color';
-import { reduceHearths, gameOver } from '../actions';
+import { reduceHearths, sceneReseted,gameOver } from '../actions';
 
 function BodyTypeException(msg){
   this.message = msg;
@@ -58,10 +58,15 @@ class Scene extends Component {
   }
   componentWillReceiveProps({paused,time}){
     //Solo cuando cambie paused renderearemos
+    if (this.props.reset) 
+    {
+      this.resetGame();
+      return;
+    }
+    
     if (this.props.paused !== paused)
     {      
       this.forceUpdate();
-      return;
     }
 
     if (this.props.time !== time) {
@@ -132,6 +137,7 @@ class Scene extends Component {
     this.collided = new Set();
     //Poner el estado
     this.state = {character,level:1, difficulty:this.getDifficulty(), obstacles:this.getObjectsConfig(character.dimensions)};
+    this.props.sceneReseted(); 
   }
 
   //ADD 1 BOX TO THE WORLD
@@ -191,12 +197,9 @@ class Scene extends Component {
       return;
   
     this.collided.add(body.id);  
-    if (this.props.hearths==1) { //GameOver
+    this.props.reduceHearths();   
+    if (this.props.hearths<=1) { //GameOver
       this.props.gameOver();
-    }
-    else
-    {
-      this.props.reduceHearths();   
     }
   }
 
@@ -467,4 +470,4 @@ function mapStateToProps({time,paused,level,hearths}){
   return {paused,level,time,hearths};
 }
 
-export default connect(mapStateToProps, {reduceHearths,gameOver} )(Pressure(Scene,pressureConfig) ) ;
+export default connect(mapStateToProps, {sceneReseted,reduceHearths,gameOver} )(Pressure(Scene,pressureConfig) ) ;

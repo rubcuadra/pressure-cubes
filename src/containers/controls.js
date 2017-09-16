@@ -6,6 +6,11 @@ import * as actions from '../actions';
 
 class Controls extends Component{
 	onPauseClick(){
+		if (!this.props.hearths>0) 
+		{
+			this.props.resetGame();
+			return;
+		}
 		if (this.props.paused) 
 		{
 			this.props.resumeGame();
@@ -23,9 +28,9 @@ class Controls extends Component{
 				<nav>
 					<Timer seconds={this.props.time}/>
 					<LifeBar life={this.props.hearths}/>
-					<button className="pause-btn" onClick={this.onPauseClick.bind(this)}> {this.props.paused?"Resume":"Pause"}</button>										
+					<button className="pause-btn" onClick={this.onPauseClick.bind(this)}> {this.props.paused?(this.props.hearths>0?"Resume":"Restart"):"Pause"}</button>										
 				</nav>
-				{this.props.paused?<h1 className="centered message">PAUSED</h1>:""}
+				{this.props.paused?<h1 className="centered message">{this.props.hearths>0?"PAUSED":"GAME OVER"}</h1>:""}
 			</div>
 	  );
 	}

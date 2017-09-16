@@ -1,5 +1,6 @@
 import { GAME_CONTINUE, GAME_PAUSE, TIMER_TICKED, RESET_TIMER } from './types';
 import { INCREASE_HEARTHS, DECREASE_HEARTHS, RESET_HEARTHS} from './types';
+import {RESET_SCENE,DONT_RESET_SCENE} from '../actions/types';
 import { START_TIMER,STOP_TIMER } from 'redux-timer-middleware';
 
 export const MAIN_TIMER_NAME = "infiniteTimer";
@@ -53,10 +54,24 @@ export function resumeGame()
 			payload: false
 	};
 }
+
+export function resetScene(){
+	return {
+		type:RESET_SCENE
+	};
+}
+
+export function sceneReseted(){
+	return {
+		type:DONT_RESET_SCENE
+	};
+}
+
 export function resetGame(){
 	return (dispatch)=>{
 		dispatch(resetTime());
-		dispatch(increaseHearths());
+		dispatch(resetHearths());
+		dispatch(resetScene());
 	};	
 }
 
