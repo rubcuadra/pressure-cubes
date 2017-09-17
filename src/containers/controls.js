@@ -5,10 +5,13 @@ import { connect } from 'react-redux';
 import * as actions from '../actions';
 
 class Controls extends Component{
+
 	onPauseClick(){
 		if (!this.props.hearths>0) 
 		{
+
 			this.props.resetGame();
+			window.location.reload();
 			return;
 		}
 		if (this.props.paused) 

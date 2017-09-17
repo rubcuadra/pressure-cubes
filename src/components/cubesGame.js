@@ -7,7 +7,7 @@ export default class CubesGame extends Component{
 	render(){
 		return (
 		<div>
-			<Controls/>
+			<Controls history={this.props.history}/>
 			<Scene/>
 		</div>);
 	}
