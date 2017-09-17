@@ -9,7 +9,7 @@ import Cylinder from '../components/cylinder';
 import Sphere from '../components/sphere';
 import { connect } from 'react-redux';
 import rMC from 'random-material-color';
-import { reduceHearths, sceneReseted,gameOver } from '../actions';
+import { reduceHearths,gameOver } from '../actions';
 
 function BodyTypeException(msg){
   this.message = msg;
