@@ -130,7 +130,7 @@ class Scene extends Component {
     this.toDelete = new Set(); //Cuando chocan se agregan aqui en lugar de ser borrados de golpe
     this.collided = new Set();
     //Poner el estado
-    this.state = {character,level:1, difficulty:this.getDifficulty(), obstacles:this.getObjectsConfig(character.dimensions)};
+    this.state = {character,difficulty:this.getDifficulty(), obstacles:this.getObjectsConfig(character.dimensions)};
   }
 
   //ADD 1 BOX TO THE WORLD
@@ -193,6 +193,8 @@ class Scene extends Component {
     this.props.reduceHearths();   
     if (this.props.hearths<=1) { //GameOver
       this.props.gameOver();
+      //Remover cuerpos visibles
+      //Ajustar dificultad
     }
   }
 
@@ -201,53 +203,54 @@ class Scene extends Component {
   }
 
   levelUp(){
-    const {difficulty,level} = this.state;
-    const {delta,deltaRateAppearence,rateAppearance,maxRateAppearance,currentMax,maximum} = difficulty;
+    const {difficulty} = this.state;
+    const {level,delta,deltaRateAppearence,rateAppearance,maxRateAppearance,currentMax,maximum} = difficulty;
     if (level === -1) return;
-
-    this.setState({level:level+1});
+    const d = {...difficulty,level:level+1};
     switch(level)
     {
       case -1:
       case  0: //MAX LEVEL
+        console.log("mxLvl");
         return;
       case 1:  
-        this.setState( { difficulty: {...difficulty,currentMax:currentMax+delta} } );
+        this.setState( { difficulty: {...d,currentMax:currentMax+delta} } );
         break;
       case 2:
-        this.setState( { difficulty:{ ...difficulty,rotation:true } });
+        this.setState( { difficulty:{ ...d,rotation:true } });
         break;
       case 3:
-        this.setState( {difficulty:{ ...difficulty,rateAppearance:rateAppearance+deltaRateAppearence}});
+        this.setState( {difficulty:{ ...d,rateAppearance:rateAppearance+deltaRateAppearence}});
         break;
       default: //Un random entre 2 y 3, si no puede uno que haga el otro, si no puede ninguno de los dos que ponga lvl max
         if ( Math.random()>0.5 ) //Validar primero que se puede aumentar OBJs
         {
           if (currentMax<maximum) //Aumentar objetos
-            return this.setState( {difficulty:{...difficulty,currentMax:currentMax+delta}});
+            return this.setState( {difficulty:{...d,currentMax:currentMax+delta}});
           else if(maxRateAppearance>rateAppearance) //Aumentar Probabilidad
-            return this.setState( {difficulty:{...difficulty,rateAppearance:rateAppearance+deltaRateAppearence}});
+            return this.setState( {difficulty:{...d,rateAppearance:rateAppearance+deltaRateAppearence}});
           else
-            return this.setState({level:-1});
+            return this.setState({difficulty:{level:-1}});
         }
         else
         { //Validar primero el rate
           if(maxRateAppearance>rateAppearance) //Aumentar Probabilidad
-            return this.setState( {difficulty:{...difficulty,rateAppearance:rateAppearance+deltaRateAppearence}});
+            return this.setState( {difficulty:{...d,rateAppearance:rateAppearance+deltaRateAppearence}});
           else if (currentMax<maximum) //Aumentar objetos
-            return this.setState( {difficulty:{...difficulty,currentMax:currentMax+delta}});
+            return this.setState( {difficulty:{...d,currentMax:currentMax+delta}});
           else
-            return this.setState({level:-1});
+            return this.setState({difficulty:{level:-1}});
         }
     }
   }
 
   getDifficulty(){
     return {
+            level:1,
             rotation:false,         //Rotating figures
             rateAppearance:10,      //Probability of that obj to appear
             deltaRateAppearence:10, //How much it increases
-            maxRateAppearance:50,   //Max Probability of that obj to appear
+            maxRateAppearance:30,   //Max Probability of that obj to appear
             currentMax:5,           //This will be modified with time
             delta:3,                //Each level how many objs are added
             maximum:50              //Must remain constant, max objects on scene
@@ -459,8 +462,8 @@ class Scene extends Component {
   }
 }
 
-function mapStateToProps({time,paused,level,hearths}){
-  return {paused,level,time,hearths};
+function mapStateToProps({time,paused,hearths}){
+  return {paused,time,hearths};
 }
 
 export default connect(mapStateToProps, {reduceHearths,gameOver} )(Pressure(Scene,pressureConfig) ) ;
